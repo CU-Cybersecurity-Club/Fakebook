@@ -7,16 +7,16 @@
 
   <body>
     <section id="header">
-      <div id="title">
+      <a id="title" href="/">
         <img src="../static/logo.png" id="logo"></img> Fakebook
-      </div>
-      <a id="logout" class="nostyle" href="login">
+      </a>
+      <a id="logout" class="nostyle" href="logout">
         Logout
       </a>
     </section>
     <section id="main">
       <div id="profile">
-        <div id="picture" style="background-image: url('../static/cat.jpg');">
+        <div id="picture" style="background-image: url('../static/{{ picture }}');">
         </div>
         <div id="name">
           {{ name }}

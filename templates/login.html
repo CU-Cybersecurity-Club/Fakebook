@@ -7,11 +7,15 @@
 
   <body>
     <section id="header">
-      <div id="title">
+      <div id="title" href="/">
         <img src="../static/logo.png" id="logo"></img> Fakebook
       </div>
       <div id="login">
-        Login:
+        {% if invalid %}
+          Invalid password! Please try again:
+        {% else %}
+          Login:
+        {% endif %}
         <form action="login" method="POST">
           <input type="text" name="username" placeholder="Username"><br>
           <input type="password" name="password" placeholder="Password"><br>
@@ -20,7 +24,7 @@
       </div>
     </section>
     <section id="main">
-      <div id="logout-welcome">
+      <div id="login-welcome">
         Welcome to Fakebook! Please log in.
       </div>
     </section>
