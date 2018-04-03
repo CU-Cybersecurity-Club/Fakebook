@@ -31,7 +31,7 @@ a.nostyle:visited {
 
 #title {
   float: left;
-  width: 80%;
+  width: 60%;
   font-size: 60px;
   font-family: arial;
   font-style: italic;
@@ -49,10 +49,33 @@ a.nostyle:visited {
   color: white;
 }
 
+#login {
+  background: #A2C6EF;
+  border-radius: 10px;
+  float: right;
+  padding: 10px;
+  font-family: sans-serif;
+  font-size: 15px;
+  color: white;
+}
+
+#login form {
+  margin: 5px 0 0 0;
+}
+
 #main {
   height: 70%;
   background: #A2C6EF;
   padding: 5% 20% 0 20%;
+}
+
+#logout-welcome {
+  color: white;
+  font-family: sans-serif;
+  font-size: 40px;
+  text-align: center;
+  background: #7AB2F2;
+  padding: 10px;
 }
 
 #profile {

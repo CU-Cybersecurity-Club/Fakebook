@@ -2,20 +2,31 @@
 
   <head>
     <title>Fakebook - Cybersecurity Club</title>
+    <link rel="stylesheet" href="../static/main.css"/>
   </head>
 
   <body>
-    Login:
-    <form action="login" method="POST">
-      Username: <input type="text" name="username"><br>
-      Password: <input type="password" name="password"><br>
-      <input type="submit" value="Submit">
-    </form>
-
-    Return Home:
-    <a id="index" class="nostyle" href="/">
-        Home Page
-    </a>
+    <section id="header">
+      <div id="title">
+        <img src="../static/logo.png" id="logo"></img> Fakebook
+      </div>
+      <div id="login">
+        Login:
+        <form action="login" method="POST">
+          <input type="text" name="username" placeholder="Username"><br>
+          <input type="password" name="password" placeholder="Password"><br>
+          <input type="submit" value="Submit">
+        </form>
+      </div>
+    </section>
+    <section id="main">
+      <div id="logout-welcome">
+        Welcome to Fakebook! Please log in.
+      </div>
+    </section>
+    <section id="footer">
+      Copyright 2018 CU Cybersecurity Club. For educational purposes only.
+    </section>
   </body>
 
 </html>

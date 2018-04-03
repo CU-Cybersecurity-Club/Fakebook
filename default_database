@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS posts;
+CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT);
+CREATE TABLE IF NOT EXISTS posts (author TEXT, posted TEXT, content TEXT);
+INSERT INTO users (username, password) VALUES ('Admin', 's0rdf1$h');
+INSERT INTO posts (author, posted, content) VALUES ('Admin', 'March 3 3:32 pm', 'I got a cat today!');
