@@ -20,12 +20,16 @@ def user_lookup(username, password):
 def index():
     return render_template('index.html', name="None")
 
-@app.route("/login", methods = ['POST', 'GET'])
+@app.route("/login", methods = ['GET','POST'])
 def login():
-    user = user_lookup(request.form['username'], request.form['password'])
+    
+    if(len(request.form) < 1 or request.method == 'GET'):
+        return render_template('login.html')
 
+    user = user_lookup(request.form['username'], request.form['password'])
+    print(user)
     if user is None:
-        return render_template('index.html', invalid=True)
+        return render_template('login.html', invalid=True) # redirect to login if login fails
     else:
         name, _, key = user
         return render_template('home.html', name=name, key=key)
