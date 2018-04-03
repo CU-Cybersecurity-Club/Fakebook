@@ -1,0 +1,121 @@
+div, section, form {
+  -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+  -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+  box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+a.nostyle:link {
+    text-decoration: inherit;
+    color: inherit;
+}
+
+a.nostyle:visited {
+    text-decoration: inherit;
+    color: inherit;
+}
+
+#header {
+  padding: 20px 100px 0 100px;
+  height: 20%;
+  background: #7AB2F2;
+}
+
+#logo {
+  width: 100px;
+  height: 100px;
+  float: left;
+  border-radius: 50%;
+  background: #A2C6EF;
+  margin: 5px;
+}
+
+#title {
+  float: left;
+  width: 80%;
+  font-size: 60px;
+  font-family: arial;
+  font-style: italic;
+  color: white;
+}
+
+#logout {
+  background: #A2C6EF;
+  border-radius: 10px;
+  width: 100px;
+  height: 30px;
+  float: right;
+  padding: 10px 0 0 0;
+  text-align: center;
+  color: white;
+}
+
+#main {
+  height: 70%;
+  background: #A2C6EF;
+  padding: 5% 20% 0 20%;
+}
+
+#profile {
+  width: 300px;
+  padding: 20px;
+  height: 80%;
+  background: #7AB2F2;
+  float: left;
+}
+
+#picture {
+  width: 260px;
+  height: 260px;
+  margin-bottom: 10px;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+#name {
+  font-size: 30px;
+  font-family: sans-serif;
+  color: white;
+}
+
+#feed {
+  width: calc(100% - 310px);
+  margin-left: 10px;
+  padding: 20px;
+  color: #FFF;
+  font-size: 30px;
+  font-family: sans-serif;
+  height: 80%;
+  overflow-y: scroll;
+  float: left;
+  background: #7AB2F2;
+}
+
+.post {
+  font-size: 14px;
+  color: #000;
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: #FFF;
+  border-radius: 5px;
+  margin: 5px 0;
+}
+
+.time {
+  color: #999;
+  text-align: right;
+}
+
+#footer {
+  height: 10%;
+  background: #7AB2F2;
+  padding-top: 20px;
+  text-align: center;
+  color: white;
+}
+
+body {
+  padding: 0px;
+  margin: 0px;
+}
