@@ -1,13 +1,10 @@
 <html>
-
-  <head>
-    <title>Fakebook - Cybersecurity Club</title>
-    <link rel="stylesheet" href="../static/main.css"/>
-  </head>
+  {% include 'head.html' %}
 
   <body>
+    {% include 'chat.html' %}
     <section id="header">
-      <a id="title" href="/">
+      <a id="title" class="nostyle" href="/">
         <img src="../static/logo.png" id="logo"></img> Fakebook
       </a>
       <a id="logout" class="nostyle" href="logout">
@@ -32,9 +29,7 @@
         </form>
       </div>
     </section>
-    <section id="footer">
-      Copyright 2018 CU Cybersecurity Club. For educational purposes only.
-    </section>
+    {% include 'footer.html' %}
   </body>
 
 </html>

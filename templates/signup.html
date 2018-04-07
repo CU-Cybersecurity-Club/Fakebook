@@ -1,0 +1,30 @@
+<html>
+  {% include 'head.html' %}
+
+  <body>
+    <section id="header">
+      <a id="title" class="nostyle" href="/">
+        <img src="../static/logo.png" id="logo"></img> Fakebook
+      </a>
+    </section>
+    <section id="main">
+      <div id="signup">
+        {% if username_exists %}
+          <span style="color: red">Username {{ username_exists }} already taken!</span>
+        {% elif different_passwords  %}
+          <span style="color: red">Passwords don't match!</span>
+        {% else %}
+          Create account:
+        {% endif %}
+        <form action="signup" method="POST">
+          <input type="text" name="username" placeholder="Username"><br>
+          <input type="password" name="password" placeholder="Password"><br>
+          <input type="password" name="repassword" placeholder="Re-enter password"><br>
+          <input type="submit" value="Create">
+        </form>
+      </div>
+    </section>
+    {% include 'footer.html' %}
+  </body>
+
+</html>

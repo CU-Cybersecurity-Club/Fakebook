@@ -1,18 +1,15 @@
 <html>
-
-  <head>
-    <title>Fakebook - Cybersecurity Club</title>
-    <link rel="stylesheet" href="../static/main.css"/>
-  </head>
+  {% include 'head.html' %}
 
   <body>
     <section id="header">
-      <div id="title" href="/">
+      <a id="title" class="nostyle" href="/">
         <img src="../static/logo.png" id="logo"></img> Fakebook
-      </div>
+      </a>
+
       <div id="login">
-        {% if invalid %}
-          Invalid password! Please try again:
+        {% if invalid_password %}
+          <span style="color: red">Invalid login!</span>
         {% else %}
           Login:
         {% endif %}
@@ -22,15 +19,18 @@
           <input type="submit" value="Submit">
         </form>
       </div>
+      <a href="/signup" class="nostyle">
+        <div id="signup-button">
+          Create Account
+        </div>
+      </a>
     </section>
     <section id="main">
       <div id="login-welcome">
-        Welcome to Fakebook! Please log in.
+        Welcome to Fakebook beta!
       </div>
     </section>
-    <section id="footer">
-      Copyright 2018 CU Cybersecurity Club. For educational purposes only.
-    </section>
+    {% include 'footer.html' %}
   </body>
 
 </html>

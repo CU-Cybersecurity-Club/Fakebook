@@ -1,0 +1,81 @@
+<section id="chat">
+  <div id="chat-display">
+    {% for chat in chats %}
+      <div class="chat-post" id="chat-post-template">
+        <div class="chat-picture" style="background-image: url(../static/{{ chat[3] }})"></div>
+        <div class="chat-user">{{ chat[0] }}</div><div class="chat-time">{{ chat[1] }}</div>
+        <br/>
+        <div class="chat-msg">{{ chat[2] }}</div>
+      </div>
+    {% endfor %}
+    <div class="chat-post" id="chat-post-template" style="display: none">
+      <div class="chat-picture"></div>
+      <div class="chat-user"></div><div class="chat-time"></div>
+      <br/>
+      <div class="chat-msg"></div>
+    </div>
+  </div>
+  <textarea id="chat-input" placeholder="Message group"></textarea>
+  <!-- <button onclick="post()">send</button> -->
+
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+  <script type="text/javascript" charset="utf-8">
+  function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+  socket.on('connect', function() {
+    socket.emit('my event', {data: 'I\'m connected!'});
+  });
+  socket.on('message', function(data) {
+    console.log('Message: ' + data);
+  });
+  socket.on('json', function(data) {
+    console.log("Got new json:")
+    console.log(data)
+    if(data.token == 'invalid') {
+      window.location = '/login';
+    }
+  });
+  socket.on('post', function(data) {
+    console.log("Got new post!")
+    console.log(data)
+    var chat = document.getElementById('chat-display');
+    var new_post = document.getElementById('chat-post-template').cloneNode(true);
+    console.log(new_post)
+    new_post.style = '';
+    new_post.getElementsByClassName('chat-user')[0].innerHTML = data.user;
+    new_post.getElementsByClassName('chat-time')[0].innerHTML = data.time;
+    new_post.getElementsByClassName('chat-msg')[0].innerHTML = data.msg;
+    new_post.getElementsByClassName('chat-picture')[0].style = 'background-image: url(\'../static/' + data.picture + '\')';
+
+    chat.appendChild(new_post);
+  });
+  function post() {
+    message = document.getElementById("chat-input").value;
+    document.getElementById("chat-input").value = '';
+    console.log("Sending: ", {token: getCookie('token'), msg: message});
+    ret = socket.emit("chat", {token: getCookie('token'), msg: message});
+    console.log(ret)
+  }
+
+  document.getElementById('chat-input').onkeyup = function(e) {
+      if (e.keyCode === 13) {
+          post();
+      }
+  };
+  </script>
+</section>
