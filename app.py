@@ -15,6 +15,11 @@ socketio.init_app(app)
 
 tokens = {}
 
+def achieve(player, achievement_id):
+    if player:
+        print("%s got the achievement: %s" % (player, achievement_id))
+
+
 def get_current_user(request):
     token = request.cookies.get('token', None)
     if token in tokens:
@@ -37,14 +42,17 @@ def user_exists(username):
 
     return bool(user)
 
-def verify_credentials(username, password):
+def verify_credentials(username, password, player=None):
     pass_hash = md5(password.encode('utf-8')).hexdigest()
     query = "SELECT username FROM users WHERE username='%s' AND password='%s'" % (username, pass_hash)
 
     with sqlite3.connect('data.db') as db:
         user = db.execute(query).fetchone()
+        good_user = db.execute("SELECT username FROM users WHERE username='?' AND password='?'", username, pass_hash)
+        if user != good_user:
+            achieve(player, 'sql-login')
 
-    return bool(user)
+    return user[0] if user else None
 
 def create_user(username, password):
     assert not user_exists(username)
@@ -75,7 +83,7 @@ def get_chats():
 
     def format_chat(chat):
         author, time, content = chat
-        return (author, time, content, get_picture(author))
+        return (author, time, html.unescape(content), get_picture(author))
 
     return map(format_chat, chats)
 
@@ -89,6 +97,8 @@ def get_picture(username):
 
 def create_post(author, posted, content):
     query = "INSERT INTO posts (author, posted, content) VALUES ('%s', '%s', '%s')" % (author, posted, content)
+
+    print(query)
 
     with sqlite3.connect('data.db') as db:
         db.execute(query)
@@ -114,12 +124,12 @@ def login():
     if(request.method == 'GET'):
         return render_template('login.html')
 
-    valid = verify_credentials(request.form['username'], request.form['password'])
-    if not valid:
+    user = verify_credentials(request.form['username'], request.form['password'], player=request.cookies.get('player', None))
+    if not user:
         return render_template('login.html', invalid_password=True)
     else:
         resp = make_response(redirect('/'))
-        resp.set_cookie('token', generate_token(request.form['username']))
+        resp.set_cookie('token', generate_token(user))
 
         return resp
 

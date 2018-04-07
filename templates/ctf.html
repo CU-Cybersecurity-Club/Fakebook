@@ -1,0 +1,43 @@
+<section id="ctf-dashboard" class="open">
+  <h1>Welcome to the Fakebook CTF!</h1>
+
+  Please enter your name here for points:
+  <input type="text" id="ctf-player" placeholder="Username"></input>
+  <div id="ctf-toggle" onclick="openNav()">&#8250;</div>
+
+  <h3>CTF links:</h3>
+  <ul>
+    <li><a href="scoreboard" class=nostyle>scoreboard</a></li>
+    <li><a href="about" class=nostyle>about</a></li>
+  </ul>
+</section>
+<section id="overlay"></section>
+
+<script>
+  function openNav() {
+    document.getElementById("ctf-toggle").onclick = closeNav
+    document.getElementById("ctf-toggle").innerHTML = "&#8249;"
+    document.getElementById("ctf-dashboard").style.marginLeft = "0";
+    document.getElementById("overlay").style.background = "#000B";
+    document.getElementById("overlay").style.pointerEvents = undefined;
+    document.getElementById("ctf-player").value = getCookie('player');
+  }
+
+  function closeNav() {
+    var player = document.getElementById("ctf-player").value;
+    if(!player) {
+      alert("Please enter a username.");
+      return;
+    }
+    document.getElementById("ctf-toggle").onclick = openNav
+    document.getElementById("ctf-toggle").innerHTML = "&#8250;"
+    document.getElementById("ctf-dashboard").style.marginLeft = "-370px";
+    document.getElementById("overlay").style.background = "#0000";
+    document.getElementById("overlay").style.pointerEvents = "none";
+    setCookie('player', player, 7);
+  }
+
+  if(!getCookie('player')) {
+    openNav();
+  }
+</script>
