@@ -1,0 +1,32 @@
+<html>
+  {% include 'head.html' %}
+
+  <body>
+    <section id="header">
+      <a id="title" class="nostyle" href="/">
+        <img src="../static/logo.png" id="logo"></img> Scoreboard
+      </a>
+    </section>
+    <section id="main">
+      <table id="scoreboard">
+        <tr>
+          <th>User</th>
+          {% for (id, name, description, points) in achievements %}
+            <th>{{ name }}<br/>{{ points }} pts</th>
+          {% endfor %}
+        </tr>
+        {% for (player, achieved) in players %}
+          <tr>
+            <td>{{ player }}</td>
+            {% for (id, _, _, _) in achievements %}
+            <td>
+              {% if id in achieved %}&#10004;{% endif %}
+            </td>
+          {% endfor %}
+        {% endfor %}
+      </table>
+    </section>
+    {% include 'footer.html' %}
+  </body>
+
+</html>

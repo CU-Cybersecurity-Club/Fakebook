@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS chats;
 CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT, picture TEXT);
-CREATE TABLE IF NOT EXISTS posts (author TEXT, posted TEXT, content TEXT);
+CREATE TABLE IF NOT EXISTS posts (author TEXT, posted TEXT, content TEXT, player TEXT);
 CREATE TABLE IF NOT EXISTS chats (author TEXT, posted TEXT, content TEXT);
 INSERT INTO users (username, password, picture) VALUES ('Adam', '827ccb0eea8a706c4c34a16891f84e7b', 'adam.jpg');
 INSERT INTO users (username, password, picture) VALUES ('Admin', '30541fdea0a3e7311c692974ec772a7b', 'admin.jpg');

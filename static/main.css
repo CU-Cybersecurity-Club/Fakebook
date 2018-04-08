@@ -308,6 +308,18 @@ body {
 
 }
 
+#scoreboard {
+  color: #FFF;
+  text-align: center;
+  background: #7AB2F2;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.achieved {
+  background: #FFF;
+}
+
 body {
   padding: 0px;
   margin: 0px;

@@ -28,9 +28,30 @@ function setCookie(cname, cvalue, exdays) {
 
 old_alert = alert;
 alert = function() {
-  console.log("Called alert with:");
-  console.log(arguments);
-  console.log(old_alert)
-  console.log(alert)
+  // Achievement
+  try {
+    // Weird logic here:
+    // If it's not in a post, accessing 'player' will throw an error
+    // This means players can't alert themselves
+    attacker = player
+    victim = getCookie('player')
+    console.log(attacker)
+    console.log(victim)
+    achieve(attacker, 'alert');
+    if (attacker != victim) {
+      achieve(victim, 'hit-by-alert');
+    }
+  } catch (e) {}
+
   old_alert.apply(window, arguments);
+}
+
+function achieve(player, id) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", "/achieve", true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.send(JSON.stringify({
+    player: player,
+    id: id
+  }));
 }

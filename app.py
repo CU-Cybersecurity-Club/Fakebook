@@ -2,8 +2,9 @@ from flask import Flask, request, redirect, url_for, render_template, make_respo
 from datetime import datetime, timedelta
 from hashlib import md5
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
-import html
 
+import json
+import html
 import random
 import string
 import sqlite3
@@ -15,22 +16,44 @@ socketio.init_app(app)
 
 tokens = {}
 
-def achieve(player, achievement_id):
-    if player:
-        print("%s got the achievement: %s" % (player, achievement_id))
+achievements = [
+    ('sql-login', 'Blind SQL attack', 'Used SQL injection to log on as the database\'s first user.', 1),
+    ('hit-by-alert', 'XSS victim', 'Got hit by another player\'s XSS alert.', 3),
+    ('sql-specific-login', 'Targeted SQL attack', 'Used SQL injection to log on as a specific user.', 4),
+    ('alert', 'XSS alert', 'Used XSS to insert an alert.', 5),
+    ('stolen-token', 'Stolen token', 'Stole a session token from another user.', 8),
+    ('password-adam', 'Password: Adam', 'Logged in with Adam\'s password.', 8),
+    ('password-eve', 'Password: Eve', 'Logged in with Eve\'s password.', 8),
+    ('password-admin', 'Password: Admin', 'Logged in with Admin\'s password.', 10),
+]
 
+players = {
+    'Alexander': (['alert', 'sql-login']),
+    'Mark': (['sql-login']),
+}
+
+def register_achievement(player, achievement_id):
+    if player and achievement_id not in players[player]:
+        print("%s got the achievement: %s" % (player, achievement_id))
+        players[player].append(achievement_id)
 
 def get_current_user(request):
     token = request.cookies.get('token', None)
     if token in tokens:
-        name, exp = tokens[token]
+        name, exp, origin_player, ip = tokens[token]
         if exp > datetime.now():
+            # Achievement
+            current_player = request.cookies.get('player', None)
+            if current_player and current_player != origin_player:
+                print(current_player)
+                print(origin_player)
+                register_achievement(current_player, 'stolen-token')
             return name
     return None
 
-def generate_token(user, size=32):
+def generate_token(user, player=None, ip=None, size=32):
     token = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(size))
-    tokens[token] = (user, datetime.now() + timedelta(hours=24))
+    tokens[token] = (user, datetime.now() + timedelta(hours=24), player, ip)
 
     return token
 
@@ -48,9 +71,23 @@ def verify_credentials(username, password, player=None):
 
     with sqlite3.connect('data.db') as db:
         user = db.execute(query).fetchone()
-        good_user = db.execute("SELECT username FROM users WHERE username='?' AND password='?'", username, pass_hash)
+
+    # Achievements
+    if user:
+        good_user = db.execute('SELECT username FROM users WHERE username=? AND password=?', (username, pass_hash)).fetchone()
         if user != good_user:
-            achieve(player, 'sql-login')
+            first_user = db.execute('SELECT username FROM users').fetchone()
+            if user == first_user and username.find(first_user[0]) == -1:
+                register_achievement(player, 'sql-login')
+            else:
+                register_achievement(player, 'sql-specific-login')
+        elif user:
+            if user[0] == "Adam":
+                register_achievement(player, 'password-adam')
+            elif user[0] == "Eve":
+                register_achievement(player, 'password-eve')
+            elif user[0] == "Admin":
+                register_achievement(player, 'password-admin')
 
     return user[0] if user else None
 
@@ -70,8 +107,8 @@ def get_posts(username):
         posts = db.execute(query).fetchall()
 
     def format_post(post):
-        _, time, content = post
-        return '<div class="post"><div class="time">%s</div>%s</div>' % (time, content)
+        _, time, content, player = post
+        return '<div class="post"><script>player="%s"</script><div class="time">%s</div>%s</div>' % (player, time, content)
 
     return '\n'.join(map(format_post, posts))
 
@@ -79,7 +116,7 @@ def get_chats():
     query = "SELECT * FROM chats"
 
     with sqlite3.connect('data.db') as db:
-        chats = db.execute(query).fetchall()
+        chats = db.execute(query).fetchmany(100)
 
     def format_chat(chat):
         author, time, content = chat
@@ -95,13 +132,13 @@ def get_picture(username):
 
     return picture[0] if picture else 'default.png'
 
-def create_post(author, posted, content):
-    query = "INSERT INTO posts (author, posted, content) VALUES ('%s', '%s', '%s')" % (author, posted, content)
+def create_post(author, posted, content, player=None):
+    query = "INSERT INTO posts (author, posted, content, player) VALUES (?, ?, ?, ?)"
 
     print(query)
 
     with sqlite3.connect('data.db') as db:
-        db.execute(query)
+        db.execute(query, (author, posted, content, player))
 
 def create_chat(author, posted, content):
     query = "INSERT INTO chats (author, posted, content) VALUES ('%s', '%s', '%s')" % (author, posted, content)
@@ -129,7 +166,8 @@ def login():
         return render_template('login.html', invalid_password=True)
     else:
         resp = make_response(redirect('/'))
-        resp.set_cookie('token', generate_token(user))
+        player = request.cookies.get('player', None)
+        resp.set_cookie('token', generate_token(user, player, request.remote_addr))
 
         return resp
 
@@ -160,18 +198,31 @@ def logout():
 
     return resp
 
+@app.route("/scoreboard", methods = ['GET'])
+def scoreboard():
+    return render_template('scoreboard.html',
+        achievements=achievements, players=sorted(players.items()))
+
 @app.route("/post", methods = ['POST'])
 def post():
     name = request.form['author']
-    date_object = datetime.now()
-    create_post(name, date_object.strftime('%b %d %I:%M %p'), request.form['content'])
+    date = datetime.now().strftime('%b %d %I:%M %p')
+    content = request.form['content']
+    player = request.cookies['player']
+    create_post(name, date, content, player)
 
     return redirect('/')
+
+@app.route("/achieve", methods = ['POST'])
+def achieve():
+    data = json.loads(request.data.decode('utf-8'))
+    register_achievement(data.get('player', None), data.get('id', None))
+    return ('', 204)
 
 @socketio.on('chat')
 def handle_message(json):
     print("Got chat message: ", json)
-    user, _ = tokens.get(json['token'], (None,None))
+    user, _, _, _ = tokens.get(json['token'], (None,None))
     if user:
         print('%s: %s' % (user, json['msg']))
         time = datetime.now().strftime('%b %d %I:%M %p')
