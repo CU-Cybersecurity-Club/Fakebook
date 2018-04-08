@@ -35,8 +35,6 @@ alert = function() {
     // This means players can't alert themselves
     attacker = player
     victim = getCookie('player')
-    console.log(attacker)
-    console.log(victim)
     achieve(attacker, 'alert');
     if (attacker != victim) {
       achieve(victim, 'hit-by-alert');

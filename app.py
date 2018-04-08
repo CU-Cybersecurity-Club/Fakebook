@@ -16,26 +16,45 @@ socketio.init_app(app)
 
 tokens = {}
 
-achievements = [
-    ('sql-login', 'Blind SQL attack', 'Used SQL injection to log on as the database\'s first user.', 1),
-    ('hit-by-alert', 'XSS victim', 'Got hit by another player\'s XSS alert.', 3),
-    ('sql-specific-login', 'Targeted SQL attack', 'Used SQL injection to log on as a specific user.', 4),
-    ('alert', 'XSS alert', 'Used XSS to insert an alert.', 5),
-    ('stolen-token', 'Stolen token', 'Stole a session token from another user.', 8),
-    ('password-adam', 'Password: Adam', 'Logged in with Adam\'s password.', 8),
-    ('password-eve', 'Password: Eve', 'Logged in with Eve\'s password.', 8),
-    ('password-admin', 'Password: Admin', 'Logged in with Admin\'s password.', 10),
-]
+with open('achievements.json', 'r') as f:
+    achievements = json.loads(f.read())
 
-players = {
-    'Alexander': (['alert', 'sql-login']),
-    'Mark': (['sql-login']),
-}
+with open('players.json', 'r') as f:
+    players = json.loads(f.read())
+
+# achievements = {
+#     'created-account': (1, 'Created account', 'Created your account!'),
+#     'sql-login': (2, 'Blind SQL attack', 'Used SQL injection to log on as the database\'s first user.'),
+#     'hit-by-alert': (3, 'XSS victim', 'Got hit by another player\'s XSS alert.'),
+#     'sql-specific-login': (4, 'Targeted SQL attack', 'Used SQL injection to log on as a specific user.'),
+#     'alert': (5, 'XSS alert', 'Used XSS to insert an alert.'),
+#     'stolen-token': (6, 'Stolen token', 'Stole a session token from another user.'),
+#     'password-adam': (7, 'Password: Adam', 'Logged in with Adam\'s password.'),
+#     'password-eve': (8, 'Password: Eve', 'Logged in with Eve\'s password.'),
+#     'password-admin': (9, 'Password: Admin', 'Logged in with Admin\'s password.'),
+# }
+#
+# players = {
+#     'Alexander': ['alert', 'sql-login'],
+#     'Mark': ['sql-login'],
+# }
 
 def register_achievement(player, achievement_id):
-    if player and achievement_id not in players[player]:
-        print("%s got the achievement: %s" % (player, achievement_id))
-        players[player].append(achievement_id)
+    # with open('achievements.json', 'w') as f:
+    #     f.write(json.dumps(achievements))
+
+    with open('players.json', 'w') as f:
+        f.write(json.dumps(players))
+
+    if player:
+        if player not in players:
+            players[player] = [];
+        if achievement_id not in players[player]:
+            print("%s got the achievement: %s" % (player, achievement_id))
+            players[player].append(achievement_id)
+
+    with open('players.json', 'w') as f:
+        f.write(json.dumps(players))
 
 def get_current_user(request):
     token = request.cookies.get('token', None)
@@ -200,8 +219,18 @@ def logout():
 
 @app.route("/scoreboard", methods = ['GET'])
 def scoreboard():
+    def format_player(e):
+        player, achieved = e
+        score = sum([achievements[ident][0] for ident in achieved])
+        return (player, achieved, score)
+
+    def format_achievement(e):
+        ident, (score, name, desc) = e
+        return (ident, score, name, desc)
+
     return render_template('scoreboard.html',
-        achievements=achievements, players=sorted(players.items()))
+        achievements=sorted(map(format_achievement, achievements.items()), key=lambda x: x[1]),
+        players=sorted(map(format_player, players.items()), key=lambda x: -x[2]))
 
 @app.route("/post", methods = ['POST'])
 def post():

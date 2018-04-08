@@ -7,6 +7,7 @@
 
   <h3>CTF links:</h3>
   <ul>
+    <li><a href="/" class=nostyle>home</a></li>
     <li><a href="scoreboard" class=nostyle>scoreboard</a></li>
     <li><a href="about" class=nostyle>about</a></li>
   </ul>
@@ -34,6 +35,7 @@
     document.getElementById("overlay").style.background = "#0000";
     document.getElementById("overlay").style.pointerEvents = "none";
     setCookie('player', player, 7);
+    achieve(player, 'created-account');
   }
 
   if(!getCookie('player')) {

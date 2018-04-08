@@ -2,29 +2,42 @@
   {% include 'head.html' %}
 
   <body>
+    {% include 'ctf.html' %}
     <section id="header">
       <a id="title" class="nostyle" href="/">
         <img src="../static/logo.png" id="logo"></img> Scoreboard
       </a>
+      <a href="/" class="nostyle">
+        <div id="scoreboard-back">
+          Back
+        </div>
+      </a>
     </section>
     <section id="main">
-      <table id="scoreboard">
-        <tr>
-          <th>User</th>
-          {% for (id, name, description, points) in achievements %}
-            <th>{{ name }}<br/>{{ points }} pts</th>
-          {% endfor %}
-        </tr>
-        {% for (player, achieved) in players %}
-          <tr>
-            <td>{{ player }}</td>
-            {% for (id, _, _, _) in achievements %}
-            <td>
-              {% if id in achieved %}&#10004;{% endif %}
-            </td>
-          {% endfor %}
-        {% endfor %}
-      </table>
+      <div id="scoreboard">
+        <table>
+          <thead>
+            <th>User</th>
+            <th>Score</th>
+            {% for (ident, score, name, description) in achievements %}
+              <th>{{ name }}<br/>{{ score }} pts</th>
+            {% endfor %}
+          </thead>
+          <tbody>
+            {% for (player, achieved, score) in players %}
+              <tr>
+                <td>{{ player }}</td>
+                <td>{{ score }}</td>
+                {% for (ident, _, _, _) in achievements %}
+                  <td>
+                    {% if ident in achieved %}&#10004;{% endif %}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </section>
     {% include 'footer.html' %}
   </body>
