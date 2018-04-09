@@ -1,16 +1,18 @@
 <section id="ctf-dashboard" class="open">
-  <h1>Welcome to the Fakebook CTF!</h1>
+  <h1>Welcome to the Fakebook wargame!</h1>
 
   Please enter your name here for points:
-  <input type="text" id="ctf-player" placeholder="Username"></input>
+  <input type="text" id="ctf-player" onkeyup="onPlayerKey(this)" placeholder="Username"></input>
   <div id="ctf-toggle" onclick="openNav()">&#8250;</div>
 
-  <h3>CTF links:</h3>
-  <ul>
-    <li><a href="/" class=nostyle>home</a></li>
-    <li><a href="scoreboard" class=nostyle>scoreboard</a></li>
-    <li><a href="about" class=nostyle>about</a></li>
-  </ul>
+  <div id="ctf-links">
+    <h3>CTF links:</h3>
+    <ul>
+      <li><a href="/" class=nostyle>Home</a></li>
+      <li><a href="scoreboard" class=nostyle>Scoreboard</a></li>
+      <li><a href="about" class=nostyle>Guides</a></li>
+    </ul>
+  </div>
 </section>
 <section id="overlay"></section>
 
@@ -38,7 +40,32 @@
     achieve(player, 'created-account');
   }
 
+  function disableDashboard() {
+    document.getElementById("ctf-links").style.color = "#555";
+    document.getElementById("ctf-toggle").style.color = "#555";
+    document.getElementById("ctf-links").style.pointerEvents = "none";
+    document.getElementById("ctf-toggle").style.pointerEvents = "none";
+  }
+
+  function enableDashboard() {
+    document.getElementById("ctf-links").style.color = "#FFF";
+    document.getElementById("ctf-toggle").style.color = "#FFF";
+    document.getElementById("ctf-links").style.pointerEvents = "";
+    document.getElementById("ctf-toggle").style.pointerEvents = "";
+  }
+
+  function onPlayerKey(ele) {
+    console.log(ele.value)
+    if(!ele.value) {
+      disableDashboard();
+    }
+    else {
+      enableDashboard();
+    }
+  }
+
   if(!getCookie('player')) {
+    disableDashboard();
     openNav();
   }
 </script>

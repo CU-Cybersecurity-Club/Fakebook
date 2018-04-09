@@ -206,6 +206,10 @@ body {
   margin-bottom: 10px;
 }
 
+#ctf-links {
+  transition: 0.5s;
+}
+
 #ctf-toggle {
   position: absolute;
   top: calc(50% - 30px);
@@ -333,24 +337,23 @@ body {
 .tooltip {
     position: relative;
     display: inline-block;
-    border: 1px dotted black;
+    border-bottom: 1px dotted black;
 }
 
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 120px;
-    background-color: #7AB2F2;
+    background-color: black;
     color: #fff;
     text-align: center;
     border-radius: 6px;
     padding: 5px 0;
 
     /* Position the tooltip */
-    border: 1px solid black;
     position: absolute;
     z-index: 1;
-    left: 5px;
-    top: 105%;
+    top: -5px;
+    left: 105%;
 }
 
 .tooltip:hover .tooltiptext {
