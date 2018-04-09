@@ -20,7 +20,7 @@
             <th>User</th>
             <th>Score</th>
             {% for (ident, score, name, description) in achievements %}
-              <th>{{ name }}<br/>{{ score }} pts</th>
+              <th><div class="tooltip">{{ name }}<span class="tooltiptext">{{ description }}</span></div><br/>{{ score }} pts</th>
             {% endfor %}
           </thead>
           <tbody>

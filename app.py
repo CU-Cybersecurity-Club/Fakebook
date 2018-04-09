@@ -22,18 +22,19 @@ with open('achievements.json', 'r') as f:
 with open('players.json', 'r') as f:
     players = json.loads(f.read())
 
-# achievements = {
-#     'created-account': (1, 'Created account', 'Created your account!'),
-#     'sql-login': (2, 'Blind SQL attack', 'Used SQL injection to log on as the database\'s first user.'),
-#     'hit-by-alert': (3, 'XSS victim', 'Got hit by another player\'s XSS alert.'),
-#     'sql-specific-login': (4, 'Targeted SQL attack', 'Used SQL injection to log on as a specific user.'),
-#     'alert': (5, 'XSS alert', 'Used XSS to insert an alert.'),
-#     'stolen-token': (6, 'Stolen token', 'Stole a session token from another user.'),
-#     'password-adam': (7, 'Password: Adam', 'Logged in with Adam\'s password.'),
-#     'password-eve': (8, 'Password: Eve', 'Logged in with Eve\'s password.'),
-#     'password-admin': (9, 'Password: Admin', 'Logged in with Admin\'s password.'),
-# }
-#
+achievements = {
+    'created-account': (1, 'Created account', 'Created your account!'),
+    'sql-error': (2, 'Figure out login query', 'Figure out the SQL query that the website uses to log you on.'),
+    'sql-login': (3, 'Blind SQL attack', 'Use SQL injection to log on as the first user in the database.'),
+    'hit-by-alert': (4, 'XSS victim', 'Get hit by another player\'s XSS alert!'),
+    'sql-specific-login': (5, 'Targeted SQL attack', 'Use SQL injection to log on as a specific user.'),
+    'alert': (6, 'XSS alert', 'Use XSS to insert an alert.'),
+    'stolen-token': (7, 'Stolen token', 'Steal a session token from another user. (Hint - reading it over the network might be required)'),
+    'password-adam': (8, 'Password: Adam', 'Log in with Adam\'s password.'),
+    'password-eve': (9, 'Password: Eve', 'Log in with Eve\'s password.'),
+    'password-admin': (10, 'Password: Admin', 'Log in with Admin\'s password.'),
+}
+
 # players = {
 #     'Alexander': ['alert', 'sql-login'],
 #     'Mark': ['sql-login'],
@@ -86,14 +87,19 @@ def user_exists(username):
 
 def verify_credentials(username, password, player=None):
     pass_hash = md5(password.encode('utf-8')).hexdigest()
-    query = "SELECT username FROM users WHERE username='%s' AND password='%s'" % (username, pass_hash)
+    query = "SELECT username FROM users WHERE username='%s' AND password_hash='%s'" % (username, pass_hash)
 
     with sqlite3.connect('data.db') as db:
-        user = db.execute(query).fetchone()
+        try:
+            for q in query.split(';'):
+                user = db.execute(q).fetchone()
+        except Exception as e:
+            register_achievement(player, 'sql-error')
+            raise Exception('Error with query: %s (%s)' % (query, e))
 
     # Achievements
     if user:
-        good_user = db.execute('SELECT username FROM users WHERE username=? AND password=?', (username, pass_hash)).fetchone()
+        good_user = db.execute('SELECT username FROM users WHERE username=? AND password_hash=?', (username, pass_hash)).fetchone()
         if user != good_user:
             first_user = db.execute('SELECT username FROM users').fetchone()
             if user == first_user and username.find(first_user[0]) == -1:
@@ -114,7 +120,7 @@ def create_user(username, password):
     assert not user_exists(username)
 
     pass_hash = md5(password.encode('utf-8')).hexdigest()
-    query = "INSERT INTO users (username, password, picture) VALUES ('%s', '%s', 'default.png')" % (username, pass_hash)
+    query = "INSERT INTO users (username, password_hash, picture) VALUES ('%s', '%s', 'default.png')" % (username, pass_hash)
 
     with sqlite3.connect('data.db') as db:
         user = db.execute(query)
@@ -230,7 +236,7 @@ def scoreboard():
 
     return render_template('scoreboard.html',
         achievements=sorted(map(format_achievement, achievements.items()), key=lambda x: x[1]),
-        players=sorted(map(format_player, players.items()), key=lambda x: -x[2]))
+        players=sorted(map(format_player, players.items())))
 
 @app.route("/post", methods = ['POST'])
 def post():
@@ -247,6 +253,10 @@ def achieve():
     data = json.loads(request.data.decode('utf-8'))
     register_achievement(data.get('player', None), data.get('id', None))
     return ('', 204)
+
+@app.errorhandler(500)
+def server_error(error):
+    return render_template('error.html', error=error)
 
 @socketio.on('chat')
 def handle_message(json):

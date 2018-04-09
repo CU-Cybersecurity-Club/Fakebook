@@ -106,10 +106,10 @@ body {
 #main {
   height: 70%;
   background: #A2C6EF;
-  padding: 5% 10% 5% 10%;
+  padding: 50px;
 }
 
-#login-welcome {
+#login-welcome, #error {
   color: white;
   font-family: sans-serif;
   font-size: 40px;
@@ -330,8 +330,31 @@ body {
   padding: 10px 10px;
 }
 
-.achieved {
-  background: #FFF;
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #7AB2F2;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    border: 1px solid black;
+    position: absolute;
+    z-index: 1;
+    left: 5px;
+    top: 105%;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
 }
 
 body {

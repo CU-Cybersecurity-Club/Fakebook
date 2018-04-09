@@ -1,14 +1,13 @@
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS chats;
-CREATE TABLE IF NOT EXISTS users (username TEXT, password TEXT, picture TEXT);
+CREATE TABLE IF NOT EXISTS users (username TEXT, password_hash TEXT, picture TEXT);
 CREATE TABLE IF NOT EXISTS posts (author TEXT, posted TEXT, content TEXT, player TEXT);
 CREATE TABLE IF NOT EXISTS chats (author TEXT, posted TEXT, content TEXT);
-INSERT INTO users (username, password, picture) VALUES ('Adam', '827ccb0eea8a706c4c34a16891f84e7b', 'adam.jpg');
-INSERT INTO users (username, password, picture) VALUES ('Admin', '30541fdea0a3e7311c692974ec772a7b', 'admin.jpg');
-INSERT INTO users (username, password, picture) VALUES ('Eve', 'dfd78600666df07dae51e3baa77910a8', 'eve.jpg');
+INSERT INTO users (username, password_hash, picture) VALUES ('Adam', '827ccb0eea8a706c4c34a16891f84e7b', 'adam.jpg');
+INSERT INTO users (username, password_hash, picture) VALUES ('Admin', '30541fdea0a3e7311c692974ec772a7b', 'admin.jpg');
+INSERT INTO users (username, password_hash, picture) VALUES ('Eve', 'dfd78600666df07dae51e3baa77910a8', 'eve.jpg');
 INSERT INTO posts (author, posted, content) VALUES ('Adam', 'March 2 10:43 am', 'Got coffee. Feeling great!');
 INSERT INTO posts (author, posted, content) VALUES ('Admin', 'March 1 12:11 am', 'Gah, SQL is hard. StackOverflow is a lifesaver.');
 INSERT INTO posts (author, posted, content) VALUES ('Eve', 'March 1 1:22 pm', 'I got a cat today!');
 INSERT INTO posts (author, posted, content) VALUES ('Eve', 'March 3 3:32 pm', 'Feeling happy!');
-INSERT INTO chats (author, posted, content) VALUES ('Eve', 'March 3 3:32 pm', 'Hi friends!');
