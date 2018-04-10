@@ -130,7 +130,7 @@ body {
 #profile {
   width: 300px;
   padding: 20px;
-  height: 80%;
+  height: 100%;
   background: #7AB2F2;
   float: left;
 }
@@ -157,7 +157,7 @@ body {
   color: #FFF;
   font-size: 30px;
   font-family: sans-serif;
-  height: 80%;
+  height: 100%;
   overflow-y: scroll;
   float: left;
   background: #7AB2F2;
