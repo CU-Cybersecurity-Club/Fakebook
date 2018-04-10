@@ -22,19 +22,23 @@ with open('achievements.json', 'r') as f:
 with open('players.json', 'r') as f:
     players = json.loads(f.read())
 
-achievements = {
-    'created-account': (1, 'Created account', 'Created your account!'),
-    'sql-error': (2, 'Figure out login query', 'Figure out the SQL query that the website uses to log you on.'),
-    'sql-login': (3, 'Blind SQL attack', 'Use SQL injection to log on as the first user in the database.'),
-    'hit-by-alert': (4, 'XSS victim', 'Get hit by another player\'s XSS alert!'),
-    'sql-specific-login': (5, 'Targeted SQL attack', 'Use SQL injection to log on as a specific user.'),
-    'alert': (6, 'XSS alert', 'Use XSS to insert an alert.'),
-    'stolen-token': (7, 'Stolen token', 'Steal a session token from another user. (Hint - reading it over the network might be required)'),
-    'password-adam': (8, 'Password: Adam', 'Log in with Adam\'s password.'),
-    'password-eve': (9, 'Password: Eve', 'Log in with Eve\'s password.'),
-    'password-admin': (10, 'Password: Admin', 'Log in with Admin\'s password.'),
-}
-
+# achievements = {
+#     'created-account': (1, 'Create account', 'Create your account!'),
+#     'server-error': (1, 'Break server', 'Cause an internal server error.'),
+#     'sql-error': (3, 'Discover query', 'Figure out the SQL query that the website uses to log you on. (Hint - sometimes poorly-written server errors are displayed to users)'),
+#     'sql-login': (3, 'Blind SQL', 'Use SQL injection to log on as the first user in the database.'),
+#     # 'divine-command': (3, 'Divine command', 'Requirements hidden'),
+#     # 'rickrolled': (3, 'Rickrolled', 'Requirements hidden'),
+#     'hit-by-alert': (4, 'XSS victim', 'Get hit by another player\'s XSS alert!'),
+#     'sql-specific-login': (5, 'Targeted SQL', 'Use SQL injection to log on as a specific user.'),
+#     'alert': (6, 'XSS alert', 'Use XSS to insert an alert.'),
+#     'password-mel': (8, 'Password: Mel', 'Log in with Mel\'s password.'),
+#     'password-catl0v3r': (8, 'Password: CATl0v3r', 'Log in with CATl0v3r\'s password.'),
+#     'password-grace': (8, 'Password: Grace', 'Log in with Grace\'s password.'),
+#     'password-admin': (8, 'Password: Admin', 'Log in with Admin\'s password.'),
+#     'stolen-token': (10, 'Stolen token', 'Steal a session token from another user. (Hint - reading it over the network might be required)'),
+# }
+#
 # players = {
 #     'Alexander': ['alert', 'sql-login'],
 #     'Mark': ['sql-login'],
@@ -47,7 +51,7 @@ def register_achievement(player, achievement_id):
     with open('players.json', 'w') as f:
         f.write(json.dumps(players))
 
-    if player:
+    if player and achievement_id in achievements:
         if player not in players:
             players[player] = [];
         if achievement_id not in players[player]:
@@ -107,10 +111,12 @@ def verify_credentials(username, password, player=None):
             else:
                 register_achievement(player, 'sql-specific-login')
         elif user:
-            if user[0] == "Adam":
-                register_achievement(player, 'password-adam')
-            elif user[0] == "Eve":
-                register_achievement(player, 'password-eve')
+            if user[0] == "Mel":
+                register_achievement(player, 'password-mel')
+            if user[0] == "CATl0v3r":
+                register_achievement(player, 'password-catl0v3r')
+            elif user[0] == "Grace":
+                register_achievement(player, 'password-grace')
             elif user[0] == "Admin":
                 register_achievement(player, 'password-admin')
 
@@ -256,18 +262,21 @@ def achieve():
 
 @app.errorhandler(500)
 def server_error(error):
+    current_player = request.cookies.get('player', None)
+    register_achievement(current_player, 'server-error')
     return render_template('error.html', error=error)
 
 @socketio.on('chat')
 def handle_message(json):
-    print("Got chat message: ", json)
     user, _, _, _ = tokens.get(json['token'], (None,None))
     if user:
-        print('%s: %s' % (user, json['msg']))
         time = datetime.now().strftime('%b %d %I:%M %p')
         msg = html.escape(json['msg'])
         create_chat(user, time, msg)
         emit('post', {'user': user, 'msg': msg, 'time': time, 'picture': get_picture(user)}, json=True, broadcast=True)
+        current_player = request.cookies.get('player', None)
+        # if current_player and user.lower() == "god":
+        #     register_achievement(current_player, 'divine-command')
     else:
         print('Invalid user for token: %s' % json['token'])
         send({'token': 'invalid'}, json=True)

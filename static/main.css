@@ -331,7 +331,8 @@ body {
 }
 
 #scoreboard th, td {
-  padding: 10px 10px;
+  padding: 20px 20px;
+  border: 1px dotted #FFF;
 }
 
 .tooltip {
@@ -342,18 +343,19 @@ body {
 
 .tooltip .tooltiptext {
     visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
+    width: 250px;
+    background-color: #7AB2F2;
+    color: #FFF;
     text-align: center;
+    border: 2px solid #FFF;
     border-radius: 6px;
     padding: 5px 0;
 
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
-    top: -5px;
-    left: 105%;
+    top: 105%;
+    right: 0;
 }
 
 .tooltip:hover .tooltiptext {
