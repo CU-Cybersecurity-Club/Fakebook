@@ -24,19 +24,19 @@ with open('players.json', 'r') as f:
 
 # achievements = {
 #     'created-account': (1, 'Create account', 'Create your account!'),
-#     'server-error': (1, 'Break server', 'Cause an internal server error.'),
+#     'server-error': (2, 'Break server', 'Cause an internal server error.'),
 #     'sql-error': (3, 'Discover query', 'Figure out the SQL query that the website uses to log you on. (Hint - sometimes poorly-written server errors are displayed to users)'),
-#     'sql-login': (3, 'Blind SQL', 'Use SQL injection to log on as the first user in the database.'),
+#     'sql-login': (4, 'Blind SQL', 'Use SQL injection to log on as the first user in the database.'),
 #     # 'divine-command': (3, 'Divine command', 'Requirements hidden'),
 #     # 'rickrolled': (3, 'Rickrolled', 'Requirements hidden'),
-#     'hit-by-alert': (4, 'XSS victim', 'Get hit by another player\'s XSS alert!'),
-#     'sql-specific-login': (5, 'Targeted SQL', 'Use SQL injection to log on as a specific user.'),
-#     'alert': (6, 'XSS alert', 'Use XSS to insert an alert.'),
+#     'hit-by-alert': (5, 'XSS victim', 'Get hit by another player\'s XSS alert!'),
+#     'sql-specific-login': (6, 'Targeted SQL', 'Use SQL injection to log on as a specific user.'),
+#     'alert': (7, 'XSS alert', 'Use XSS to insert an alert.'),
 #     'password-mel': (8, 'Password: Mel', 'Log in with Mel\'s password.'),
-#     'password-catl0v3r': (8, 'Password: CATl0v3r', 'Log in with CATl0v3r\'s password.'),
-#     'password-grace': (8, 'Password: Grace', 'Log in with Grace\'s password.'),
-#     'password-admin': (8, 'Password: Admin', 'Log in with Admin\'s password.'),
-#     'stolen-token': (10, 'Stolen token', 'Steal a session token from another user. (Hint - reading it over the network might be required)'),
+#     'password-catl0v3r': (9, 'Password: CATl0v3r', 'Log in with CATl0v3r\'s password.'),
+#     'password-grace': (10, 'Password: Grace', 'Log in with Grace\'s password.'),
+#     'password-admin': (11, 'Password: Admin', 'Log in with Admin\'s password.'),
+#     'stolen-token': (12, 'Stolen token', 'Steal a session token from another user. (Hint - reading it over the network might be required)'),
 # }
 #
 # players = {
@@ -47,9 +47,6 @@ with open('players.json', 'r') as f:
 def register_achievement(player, achievement_id):
     # with open('achievements.json', 'w') as f:
     #     f.write(json.dumps(achievements))
-
-    with open('players.json', 'w') as f:
-        f.write(json.dumps(players))
 
     if player and achievement_id in achievements:
         if player not in players:

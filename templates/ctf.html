@@ -27,16 +27,12 @@
   }
 
   function closeNav() {
-    var player = document.getElementById("ctf-player").value;
-    if(!player) {
-      return;
-    }
     document.getElementById("ctf-toggle").onclick = openNav
     document.getElementById("ctf-toggle").innerHTML = "&#8250;"
     document.getElementById("ctf-dashboard").style.marginLeft = "-370px";
     document.getElementById("overlay").style.background = "#0000";
     document.getElementById("overlay").style.pointerEvents = "none";
-    setCookie('player', player, 7);
+    var player = document.getElementById("ctf-player").value;
     achieve(player, 'created-account');
   }
 
@@ -55,17 +51,21 @@
   }
 
   function onPlayerKey(ele) {
-    console.log(ele.value)
     if(!ele.value) {
       disableDashboard();
     }
     else {
+      setCookie('player', ele.value, 7);
       enableDashboard();
     }
   }
 
-  if(!getCookie('player')) {
+  var player = getCookie('player');
+  if(!player) {
     disableDashboard();
     openNav();
+  }
+  else {
+    achieve(player, 'created-account');
   }
 </script>
