@@ -1,13 +1,13 @@
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS posts;
 DROP TABLE IF EXISTS chats;
-CREATE TABLE IF NOT EXISTS users (username TEXT, password_hash TEXT, picture TEXT);
+CREATE TABLE IF NOT EXISTS users (username TEXT, password_hash TEXT, email TEXT, picture TEXT);
 CREATE TABLE IF NOT EXISTS posts (author TEXT, posted TEXT, content TEXT, player TEXT);
 CREATE TABLE IF NOT EXISTS chats (author TEXT, posted TEXT, content TEXT);
-INSERT INTO users (username, password_hash, picture) VALUES ('CATl0v3r', 'dfd78600666df07dae51e3baa77910a8', 'catl0v3r.jpg');
-INSERT INTO users (username, password_hash, picture) VALUES ('Mel', '827ccb0eea8a706c4c34a16891f84e7b', 'mel.jpg');
-INSERT INTO users (username, password_hash, picture) VALUES ('Admin', '30541fdea0a3e7311c692974ec772a7b', 'admin.jpg');
-INSERT INTO users (username, password_hash, picture) VALUES ('Grace', '1b2e48c44b54670d0f596c0b3ff18cf7', 'grace.jpg');
+INSERT INTO users (username, password_hash, email, picture) VALUES ('CATl0v3r', 'dfd78600666df07dae51e3baa77910a8', 'catlover@fakemail.com', 'catl0v3r.jpg');
+INSERT INTO users (username, password_hash, email, picture) VALUES ('Mel', '827ccb0eea8a706c4c34a16891f84e7b', 'mel1996@fakemail.com', 'mel.jpg');
+INSERT INTO users (username, password_hash, email, picture) VALUES ('Admin', '30541fdea0a3e7311c692974ec772a7b', 'admin@fakebook.com', 'admin.jpg');
+INSERT INTO users (username, password_hash, email, picture) VALUES ('Grace', '1b2e48c44b54670d0f596c0b3ff18cf7', 'grace-2@fakemail.com', 'grace.jpg');
 INSERT INTO posts (author, posted, content) VALUES ('Mel', 'March 2 10:43 am', 'Hi all!');
 INSERT INTO posts (author, posted, content) VALUES ('Admin', 'March 1 12:11 am', 'JavaScript is hard. I''d be dead without StackOverflow!');
 INSERT INTO posts (author, posted, content) VALUES ('CATl0v3r', 'March 1 01:22 pm', 'I got a fourth cat today!');
