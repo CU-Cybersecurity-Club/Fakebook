@@ -79,6 +79,8 @@ def generate_token(user, player=None, ip=None, size=32):
     return token
 
 def user_exists(username):
+    if("'" in username):
+        return "ERROR"
     query = "SELECT username FROM users WHERE username='%s'" % username
 
     with sqlite3.connect('data.db') as db:
@@ -88,6 +90,10 @@ def user_exists(username):
 
 def verify_credentials(username, password, player=None):
     pass_hash = md5(password.encode('utf-8')).hexdigest()
+    if("'" in username):
+        return "ERROR"
+    elif("'" in password):
+        return "ERROR"
     query = "SELECT username FROM users WHERE username='%s' AND password_hash='%s'" % (username, pass_hash)
 
     with sqlite3.connect('data.db') as db:
@@ -121,6 +127,8 @@ def verify_credentials(username, password, player=None):
 
 def create_user(username, password):
     assert not user_exists(username)
+    if("'" in username or "'" in password):
+        return "ERROR"
 
     pass_hash = md5(password.encode('utf-8')).hexdigest()
     query = "INSERT INTO users (username, password_hash, picture) VALUES ('%s', '%s', 'default.png')" % (username, pass_hash)
