@@ -107,10 +107,10 @@ def verify_credentials(username, password, player=None):
         good_user = db.execute('SELECT username FROM users WHERE username=? AND password_hash=?', (username, pass_hash)).fetchone()
         if user != good_user:
             first_user = db.execute('SELECT username FROM users').fetchone()
-            if user == first_user and username.find(first_user[0]) == -1:
-                register_achievement(player, 'sql-login')
-            else:
-                register_achievement(player, 'sql-specific-login')
+            #if user == first_user and username.find(first_user[0]) == -1:
+            #    register_achievement(player, 'sql-login')
+            #else:
+            #    register_achievement(player, 'sql-specific-login')
         elif user:
             if user[0] == "Mel":
                 register_achievement(player, 'password-mel')
@@ -268,6 +268,8 @@ def achieve():
 @app.route("/hack", methods = ['GET'])
 def hack():
     query = "SELECT * FROM users"
+    current_player = request.cookies.get('player',None)
+    register_achievement(current_player,'unlisted-path')
 
     with sqlite3.connect('data.db') as db:
         data = db.execute(query).fetchall()
