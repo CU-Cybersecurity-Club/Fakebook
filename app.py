@@ -90,10 +90,8 @@ def user_exists(username):
 
 def verify_credentials(username, password, player=None):
     pass_hash = md5(password.encode('utf-8')).hexdigest()
-    if("'" in username):
-        return "ERROR"
-    elif("'" in password):
-        return "ERROR"
+    if("'" in username or "'" in password):
+        return ""
     query = "SELECT username FROM users WHERE username='%s' AND password_hash='%s'" % (username, pass_hash)
 
     with sqlite3.connect('data.db') as db:
@@ -128,7 +126,7 @@ def verify_credentials(username, password, player=None):
 def create_user(username, password):
     assert not user_exists(username)
     if("'" in username or "'" in password):
-        return "ERROR"
+        return ""
 
     pass_hash = md5(password.encode('utf-8')).hexdigest()
     query = "INSERT INTO users (username, password_hash, picture) VALUES ('%s', '%s', 'default.png')" % (username, pass_hash)
@@ -169,7 +167,7 @@ def get_picture(username):
     return picture[0] if picture else 'default.png'
 
 def create_post(author, posted, content, player=None):
-    query = "INSERT INTO posts (author, posted, content, pla    yer) VALUES (?, ?, ?, ?)"
+    query = "INSERT INTO posts (author, posted, content, player) VALUES (?, ?, ?, ?)"
 
     print(query)
 
