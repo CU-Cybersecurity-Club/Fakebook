@@ -11,7 +11,7 @@
   "sql-specific-login": [ 6, "Targeted SQL", "Use SQL injection to log on as a specific user." ],
   "sql-login": [ 4, "Blind SQL", "Use SQL injection to log on as the first user in the database." ],
   "server-error": [ 2, "Break server", "Cause an internal server error." ],
-  "find-comment": [ 2, "Find Data in Comment", "Find a login hidden amoung the html" ],
+  "find-comment": [ 2, "Find Login in Html", "Find a login hidden in the html files. (Hint - inspect element is your friend)" ],
   "beef-hook": [ 13, "Beef Hook Injection", "Use the browser exploitation framework to inject a xss hook onto the site" ],
   "force-redirect": [ 8, "Redirect Page", "Use XSS to redirect the page to another of your choice" ],
   "popups": [9,"Popups Gallore","Inject some javascript that will make an alert popup every 5 seconds"]

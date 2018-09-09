@@ -120,6 +120,8 @@ def verify_credentials(username, password, player=None):
                 register_achievement(player, 'password-grace')
             elif user[0] == "Admin":
                 register_achievement(player, 'password-admin')
+            elif user[0] == "nobodyknowsme":
+                register_achievement(player, 'find-comment')
 
     return user[0] if user else None
 
