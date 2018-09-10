@@ -9,8 +9,6 @@
   "created-account": [ 1, "Create account", "Create your account!" ],
   "server-error": [ 2, "Break server", "Cause an internal server error." ],
   "find-comment": [ 4, "Find login", "Find a login hidden in the html files. (Hint - inspect element is your friend)" ],
-  "beef-hook": [ 14, "Beef hook injection", "Use the browser exploitation framework to inject a xss hook onto the site" ],
   "force-redirect": [ 6, "Redirect page", "Use XSS to redirect the page to another of your choice" ],
-  "popups": [ 12, "Popups gallore", "Inject some javascript that will make an alert popup every 5 seconds" ],
-  "unlisted-path":  [13,"Find hidden path","Find a hidden url path (Hint - a url path is the extension to the address. ex: www.abc.com/path versus www.abc.com/differentpath"]
+  "unlisted-path":  [12,"Find hidden path","Find a hidden url path (Hint - a url path is the extension to the address. ex: www.abc.com/path versus www.abc.com/differentpath"]
 }

@@ -1,36 +1,40 @@
 <html>
   {% include 'head.html' %}
    <!--nobodyknowsme:youcantbreakthis-->
-  <body>
+<body>
     {% include 'ctf.html' %}
     {% include 'chat.html' %}
     <section id="header">
-      <a id="title" class="nostyle" href="/">
-        <img src="../static/logo.png" id="logo"></img> Fakebook
-      </a>
-      <a id="logout" class="nostyle" href="logout">
-        Logout
-      </a>
+        <a id="title" class="nostyle" href="/">
+            <img src="../static/logo.png" id="logo"></img> Fakebook
+        </a>
+        <a id="logout" class="nostyle" href="logout">
+            Logout
+        </a>
     </section>
     <section id="main">
-      <div id="profile">
-        <div id="picture" style="background-image: url('../static/{{ picture }}');">
-        </div>
-        <div id="name">
-          {{ name }}
-        </div>
-      </div>
-      <div id="feed">
-        Feed:
-        {{ posts | safe }}
-        <form action='post' method='POST' class="post">
-          <input type="hidden" name="author" value="{{ name }}">
-          <input type="text" name="content">
-          <input type="submit" value="Submit">
+        <form action="reset" method='POST' class="nostyle">
+            <input type="hidden" name="author" value="{{name}}" />
+            <input type="submit" value="Reset Page" />
         </form>
-      </div>
+        <div id="profile">
+            <div id="picture" style="background-image: url('../static/{{ picture }}');">
+            </div>
+            <div id="name">
+                {{ name }}
+            </div>
+        </div>
+        <div id="feed">
+            Feed:
+            {{ posts | safe }}
+            <form action='post' method='POST' class="post">
+                <input type="hidden" name="author" value="{{ name }}">
+                <input type="text" name="content">
+                <input type="submit" value="Submit">
+            </form>
+        </div>
     </section>
     {% include 'footer.html' %}
-  </body>
+</body>
 
 </html>

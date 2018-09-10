@@ -183,6 +183,12 @@ def create_chat(author, posted, content):
     with sqlite3.connect('data.db') as db:
         db.execute(query)
 
+def reset_page(author):
+    query = "DELETE FROM posts Where author is '%s'" % author
+
+    with sqlite3.connect('data.db') as db:
+        db.execute(query)
+
 @app.route("/")
 def index():
     user = get_current_user(request)
@@ -263,6 +269,13 @@ def post():
 
     return redirect('/')
 
+
+@app.route("/reset", methods = ['POST'])
+def reset():
+    author = request.form['author']
+    reset_page(author)
+
+    return redirect("/")
 
 @app.route("/achieve", methods = ['POST'])
 def achieve():
