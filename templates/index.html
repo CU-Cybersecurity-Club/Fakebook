@@ -13,10 +13,6 @@
         </a>
     </section>
     <section id="main">
-        <form action="reset" method='POST' class="nostyle">
-            <input type="hidden" name="author" value="{{name}}" />
-            <input type="submit" value="Reset Page" />
-        </form>
         <div id="profile">
             <div id="picture" style="background-image: url('../static/{{ picture }}');">
             </div>
@@ -31,6 +27,10 @@
                 <input type="hidden" name="author" value="{{ name }}">
                 <input type="text" name="content">
                 <input type="submit" value="Submit">
+            </form>
+            <form action="reset" method="POST" class="post">
+                <input type="submit" value="Reset Feed">
+                <input type="hidden" name="author" value="{{ name }}" />
             </form>
         </div>
     </section>

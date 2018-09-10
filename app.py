@@ -73,7 +73,7 @@ def get_current_user(request):
             return name
     return None
 
-def generate_token(user, player=None, ip=None, size=32):
+def generate_token(user, player=None, ip=None, size=8):
     token = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(size))
     tokens[token] = (user, datetime.now() + timedelta(hours=24), player, ip)
 
@@ -82,66 +82,62 @@ def generate_token(user, player=None, ip=None, size=32):
 def user_exists(username):
     if("'" in username):
         return "ERROR"
-    query = "SELECT username FROM users WHERE username='%s'" % username
+    query = "SELECT username FROM users WHERE username=?"
 
     with sqlite3.connect('data.db') as db:
-        user = db.execute(query).fetchone()
+        user = db.execute(query, (username,)).fetchone()
 
     return bool(user)
 
 def verify_credentials(username, password, player=None):
     pass_hash = md5(password.encode('utf-8')).hexdigest()
-    if("'" in username or "'" in password):
-        return ""
-    query = "SELECT username FROM users WHERE username='%s' AND password_hash='%s'" % (username, pass_hash)
+    query = "SELECT username FROM users WHERE username=? AND password_hash=?"
 
     with sqlite3.connect('data.db') as db:
         try:
             for q in query.split(';'):
-                user = db.execute(q).fetchone()
+                user = db.execute(q, (username, pass_hash)).fetchone()
         except Exception as e:
             register_achievement(player, 'sql-error')
             raise Exception('Error with query: %s (%s)' % (query, e))
 
     # Achievements
-    if user:
-        good_user = db.execute('SELECT username FROM users WHERE username=? AND password_hash=?', (username, pass_hash)).fetchone()
-        if user != good_user:
-            first_user = db.execute('SELECT username FROM users').fetchone()
-            #if user == first_user and username.find(first_user[0]) == -1:
-            #    register_achievement(player, 'sql-login')
-            #else:
-            #    register_achievement(player, 'sql-specific-login')
-        elif user:
-            if user[0] == "Mel":
-                register_achievement(player, 'password-mel')
-            if user[0] == "CATl0v3r":
-                register_achievement(player, 'password-catl0v3r')
-            elif user[0] == "Grace":
-                register_achievement(player, 'password-grace')
-            elif user[0] == "Admin":
-                register_achievement(player, 'password-admin')
-            elif user[0] == "nobodyknowsme":
-                register_achievement(player, 'find-comment')
+    # if user:
+    #     good_user = db.execute('SELECT username FROM users WHERE username=? AND password_hash=?', (username, pass_hash)).fetchone()
+    #     if user != good_user:
+    #         first_user = db.execute('SELECT username FROM users').fetchone()
+    #         #if user == first_user and username.find(first_user[0]) == -1:
+    #         #    register_achievement(player, 'sql-login')
+    #         #else:
+    #         #    register_achievement(player, 'sql-specific-login')
+    #     elif user:
+    #         if user[0] == "Mel":
+    #             register_achievement(player, 'password-mel')
+    #         if user[0] == "CATl0v3r":
+    #             register_achievement(player, 'password-catl0v3r')
+    #         elif user[0] == "Grace":
+    #             register_achievement(player, 'password-grace')
+    #         elif user[0] == "Admin":
+    #             register_achievement(player, 'password-admin')
+    #         elif user[0] == "nobodyknowsme":
+    #             register_achievement(player, 'find-comment')
 
     return user[0] if user else None
 
 def create_user(username, password):
     assert not user_exists(username)
-    if("'" in username or "'" in password):
-        return ""
 
     pass_hash = md5(password.encode('utf-8')).hexdigest()
-    query = "INSERT INTO users (username, password_hash, picture) VALUES ('%s', '%s', 'default.png')" % (username, pass_hash)
+    query = "INSERT INTO users (username, password_hash, picture) VALUES (?, ?, 'default.png')"
 
     with sqlite3.connect('data.db') as db:
-        user = db.execute(query)
+        user = db.execute(query, (username, pass_hash))
 
 def get_posts(username):
-    query = "SELECT * FROM posts WHERE author='%s'" % (username)
+    query = "SELECT * FROM posts WHERE author=?"
 
     with sqlite3.connect('data.db') as db:
-        posts = db.execute(query).fetchall()
+        posts = db.execute(query, (username,)).fetchall()
 
     def format_post(post):
         _, time, content, player = post
@@ -162,12 +158,21 @@ def get_chats():
     return map(format_chat, chats)
 
 def get_picture(username):
-    query = "SELECT picture FROM users WHERE username='%s'" % (username)
+    query = "SELECT picture FROM users WHERE username=?"
 
     with sqlite3.connect('data.db') as db:
-        picture = db.execute(query).fetchone()
+        picture = db.execute(query, (username,)).fetchone()
 
     return picture[0] if picture else 'default.png'
+
+def get_search_results(search):
+    query = "SELECT username, picture FROM users WHERE instr(username, ?) > 0"
+
+    with sqlite3.connect('data.db') as db:
+        results = db.execute(query, (search,)).fetchmany(100)
+
+    return results
+
 
 def create_post(author, posted, content, player=None):
     query = "INSERT INTO posts (author, posted, content, player) VALUES (?, ?, ?, ?)"
@@ -277,28 +282,29 @@ def reset():
 
     return redirect("/")
 
+@app.route("/search", methods = ['GET'])
+def search():
+    query = request.args.get('q')
+    results = get_search_results(query)
+    return render_template('search.html', query=query, results=results)
+
+@app.route('/users/<path:user>')
+def userPage(user):
+    if not user_exists(user):
+        return ('404: User not found!', 404)
+    return render_template('user.html', name=user, posts=get_posts(user), picture=get_picture(user), chats=get_chats())
+
 @app.route("/achieve", methods = ['POST'])
 def achieve():
     data = json.loads(request.data.decode('utf-8'))
     register_achievement(data.get('player', None), data.get('id', None))
     return ('', 204)
 
-@app.route("/hack", methods = ['GET'])
-def hack():
-    query = "SELECT * FROM users"
-    current_player = request.cookies.get('player',None)
-    register_achievement(current_player,'unlisted-path')
-
-    with sqlite3.connect('data.db') as db:
-        data = db.execute(query).fetchall()
-
-    return '<body style="color: #06cc06; background: black; margin: 0; height: 100%; font-size: 40px;">' + str(data) + '</body>'
-
 @app.errorhandler(500)
 def server_error(error):
     current_player = request.cookies.get('player', None)
     register_achievement(current_player, 'server-error')
-    return render_template('error.html', error=error)
+    return render_template('error.html')
 
 @socketio.on('chat')
 def handle_message(json):

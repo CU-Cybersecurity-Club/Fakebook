@@ -1,0 +1,18 @@
+{
+  "stolen-token": [ 12, "Stolen token", "Steal a session token from another user. (Hint - reading it over the network might be required)" ],
+  "password-catl0v3r": [ 9, "Password: CATl0v3r", "Log in with CATl0v3r's password." ],
+  "password-grace": [ 10, "Password: Grace", "Log in with Grace's password." ],
+  "password-mel": [ 8, "Password: Mel", "Log in with Mel's password." ],
+  "password-admin": [ 11, "Password: Admin", "Log in with Admin's password." ],
+  "hit-by-alert": [ 5, "XSS victim", "Get hit by another player's XSS alert!" ],
+  "alert": [ 7, "XSS alert", "Use XSS to insert an alert." ],
+  "sql-error": [ 3, "Discover query", "Figure out the SQL query that the website uses to log you on. (Hint - sometimes poorly-written server errors are displayed to users)" ],
+  "created-account": [ 1, "Create account", "Create your account!" ],
+  "sql-specific-login": [ 6, "Targeted SQL", "Use SQL injection to log on as a specific user." ],
+  "sql-login": [ 4, "Blind SQL", "Use SQL injection to log on as the first user in the database." ],
+  "server-error": [ 2, "Break server", "Cause an internal server error." ],
+  "find-comment": [ 4, "Find Login", "Find a login hidden in the html files. (Hint - inspect element is your friend)" ],
+  "beef-hook": [ 13, "Beef Hook Injection", "Use the browser exploitation framework to inject a xss hook onto the site" ],
+  "force-redirect": [ 8, "Redirect Page", "Use XSS to redirect the page to another of your choice" ],
+  "popups": [9,"Popups Gallore","Inject some javascript that will make an alert popup every 5 seconds"]
+}

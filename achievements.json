@@ -1,11 +1,7 @@
 {
   "stolen-token": [ 11, "Stolen token", "Steal a session token from another user. (Hint - reading it over the network might be required)" ],
-  "password-catl0v3r": [ 8, "Password: CATl0v3r", "Log in with CATl0v3r's password." ],
-  "password-grace": [ 9, "Password: Grace", "Log in with Grace's password." ],
   "password-mel": [ 7, "Password: Mel", "Log in with Mel's password." ],
-  "password-admin": [ 10, "Password: Admin", "Log in with Admin's password." ],
   "alert": [ 5, "XSS alert", "Use XSS to insert an alert." ],
-  "sql-error": [ 3, "Discover query", "Figure out the SQL query that the website uses to log you on. (Hint - sometimes poorly-written server errors are displayed to users)" ],
   "created-account": [ 1, "Create account", "Create your account!" ],
   "server-error": [ 2, "Break server", "Cause an internal server error." ],
   "find-comment": [ 4, "Find login", "Find a login hidden in the html files. (Hint - inspect element is your friend)" ],

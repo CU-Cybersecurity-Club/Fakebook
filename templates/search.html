@@ -1,0 +1,29 @@
+<html>
+  {% include 'head.html' %}
+<body>
+    {% include 'ctf.html' %}
+    <section id="header">
+        <a id="title" class="nostyle" href="/">
+            <img src="../static/logo.png" id="logo"></img> Fakebook
+        </a>
+    </section>
+    <section id="main">
+        {% if results %}
+            <p>Your search for "{{ query | safe }}" returned the following results:</p>
+            {% for (username, picture) in results %}
+                <a href="/users/{{ username }}">
+                  <div class="search-result">
+                    <div class="thumbnail" style="background-image: url('../static/{{ picture }}');"></div>
+                    <p>{{ username }}</p>
+                  </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <p>No results for "{{ query | safe }}"!</p>
+        {% endif %}
+        {% include 'search-widget.html' %}
+    </section>
+    {% include 'footer.html' %}
+</body>
+
+</html>
