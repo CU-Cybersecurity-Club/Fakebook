@@ -294,6 +294,36 @@ def userPage(user):
         return ('404: User not found!', 404)
     return render_template('user.html', name=user, posts=get_posts(user), picture=get_picture(user), chats=get_chats())
 
+@app.route("/hidden",methods = ['GET'])
+def hidden():
+    query = "SELECT * FROM users"  
+
+    current_player = request.cookies.get('player',None)  
+    register_achievement(current_player,'unlisted-path')  
+
+    with sqlite3.connect('data.db') as db: 
+        data = db.execute(query).fetchall() 
+    
+    query = "SELECT * FROM posts"
+
+    with sqlite3.connect('data.db') as db:
+        data += db.execute(query).fetchall()
+
+    query = "SELECT * FROM chats"
+
+    with sqlite3.connect('data.db') as db:
+        data += db.execute(query).fetchall()
+
+    output = ''
+    for i in data:
+        for j in i:
+            if(not j == None):
+                j = j.replace('<script>','!script!')
+                j.replace('</script>',"!script!")
+                output += j + '<br>'
+
+    return '<body style="color: #06cc06; background: black; margin: 0; height: 100%; font-size: 40px;">HACKED THE SYSTEM. HERE IS ALL THE DATA IN THE DATABASE!!! ' + str(output) + '</body>' 
+
 @app.route("/achieve", methods = ['POST'])
 def achieve():
     data = json.loads(request.data.decode('utf-8'))
