@@ -8,6 +8,7 @@ import html
 import random
 import string
 import sqlite3
+import re
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -251,13 +252,17 @@ def scoreboard():
 
 @app.route("/post", methods = ['POST'])
 def post():
+    regex = '^<script>window\.location(\.href="https?:\/\/.*"|\.replace\("https?:\/\/.*"\))<\/script>?'
     name = request.form['author']
     date = datetime.now().strftime('%b %d %I:%M %p')
     content = request.form['content']
     player = request.cookies['player']
+    if(re.match(regex,content)):
+        register_achievement(player,'force-redirect')
     create_post(name, date, content, player)
 
     return redirect('/')
+
 
 @app.route("/achieve", methods = ['POST'])
 def achieve():

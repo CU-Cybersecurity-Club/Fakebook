@@ -33,9 +33,9 @@ alert = function() {
     // Weird logic here:
     // If it's not in a post, accessing 'player' will throw an error
     // This means players can't alert themselves
-    attacker = player
-    victim = getCookie('player')
-    achieve(attacker, 'alert');
+      attacker = player;
+      victim = getCookie('player');
+      achieve(attacker, 'alert');
     if (attacker != victim) {
       achieve(victim, 'hit-by-alert');
     }
