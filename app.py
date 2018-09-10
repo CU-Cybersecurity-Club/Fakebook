@@ -264,25 +264,25 @@ def scoreboard():
 @app.route("/post", methods = ['POST'])
 def post():
     regex = '^<script>window\.location(\.href="https?:\/\/.*"|\.replace\("https?:\/\/.*"\))<\/script>?'
-    name = request.form['author']
+    user = get_current_user(request)
     date = datetime.now().strftime('%b %d %I:%M %p')
     content = request.form['content']
     player = request.cookies['player']
     if(re.match(regex,content)):
         register_achievement(player,'force-redirect')
-    create_post(name, date, content, player)
+    create_post(user, date, content, player)
 
-    return redirect('/')
+    return redirect('/users/' + user)
 
 
-@app.route("/reset", methods = ['POST'])
+@app.route('/reset', methods = ['POST'])
 def reset():
-    author = request.form['author']
-    reset_page(author)
+    user = get_current_user(request)
+    reset_page(user)
 
-    return redirect("/")
+    return redirect('/users/' + user)
 
-@app.route("/search", methods = ['GET'])
+@app.route('/search', methods = ['GET'])
 def search():
     query = request.args.get('q')
     results = get_search_results(query)
@@ -290,11 +290,17 @@ def search():
 
 @app.route('/users/<path:user>')
 def userPage(user):
+    current_user = get_current_user(request)
+    if not current_user:
+        return redirect('login')
+
     if not user_exists(user):
         return ('404: User not found!', 404)
-    return render_template('user.html', name=user, posts=get_posts(user), picture=get_picture(user), chats=get_chats())
 
-@app.route("/achieve", methods = ['POST'])
+    auth = user == current_user
+    return render_template('user.html', name=user, posts=get_posts(user), picture=get_picture(user), chats=get_chats(), auth=auth)
+
+@app.route('/achieve', methods = ['POST'])
 def achieve():
     data = json.loads(request.data.decode('utf-8'))
     register_achievement(data.get('player', None), data.get('id', None))

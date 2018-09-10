@@ -21,6 +21,30 @@
             </div>
         </div>
         <div id="feed">
+            <h3>Welcome to the Fakebook beta, {{ name }}!</h3>
+            <div class="widget">
+              <form action="search" role="search">
+                  <div class="search-control">
+                  <input type="search" id="user-search" name="q"
+                       placeholder="Search users..."
+                       aria-label="Search through site's users">
+                       <button>Search</button>
+                 </div>
+               </form>
+            </div>
+            <div class="widget">
+              <form action="/users/{{ name }}" method="GET">
+                <input type="submit" value="Go to profile">
+                <!-- <input type="hidden" name="author" value="{{ name }}" /> -->
+              </form>
+            </div>
+            <div class="widget">
+              <form action="reset" method="POST">
+                <input type="submit" value="Reset profile feed">
+                <!-- <input type="hidden" name="author" value="{{ name }}" /> -->
+              </form>
+            </div>
+          <!--
             Feed:
             {{ posts | safe }}
             <form action='post' method='POST' class="post">
@@ -31,7 +55,7 @@
             <form action="reset" method="POST" class="post">
                 <input type="submit" value="Reset Feed">
                 <input type="hidden" name="author" value="{{ name }}" />
-            </form>
+            </form> -->
         </div>
     </section>
     {% include 'footer.html' %}
