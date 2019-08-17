@@ -5,7 +5,7 @@
   <div id="chat-display">
     {% for chat in chats %}
       <div class="chat-post" id="chat-post-template">
-        <div class="chat-picture" style="background-image: url(../static/{{ chat[3] }})"></div>
+        <div class="chat-picture" style="background-image: url(/static/img/{{ chat[3] }})"></div>
         <div class="chat-user">{{ chat[0] }}</div><div class="chat-time">{{ chat[1] }}</div>
         <br/>
         <div class="chat-msg">{{ chat[2] }}</div>
@@ -36,7 +36,7 @@
     new_post.getElementsByClassName('chat-user')[0].innerHTML = data.user;
     new_post.getElementsByClassName('chat-time')[0].innerHTML = data.time;
     new_post.getElementsByClassName('chat-msg')[0].innerHTML = data.msg;
-    new_post.getElementsByClassName('chat-picture')[0].style = 'background-image: url(\'../static/' + data.picture + '\')';
+    new_post.getElementsByClassName('chat-picture')[0].style = 'background-image: url(\'../img/static/' + data.picture + '\')';
 
     display.appendChild(new_post);
     display.scroll(0, display.scrollHeight)

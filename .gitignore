@@ -1,0 +1,19 @@
+*~
+*.swp
+
+# Python residuals
+*.pyc
+*__pycache__
+*__pytest_cache__
+
+# Virtual environments
+env
+venv
+virtualenv
+
+# Environment configurations
+.env
+
+# Database files
+*.db
+*.sqlite3

@@ -1,1 +1,1 @@
-sqlite3 data.db < default_database
+sqlite3 data.db < config/default_database

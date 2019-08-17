@@ -6,7 +6,7 @@
     {% include 'chat.html' %}
     <section id="header">
         <a id="title" class="nostyle" href="/">
-            <img src="../static/logo.png" id="logo"></img> Fakebook
+            <img src="/static/img/logo.png" id="logo"></img> Fakebook
         </a>
         <a id="logout" class="nostyle" href="logout">
             Logout
@@ -14,7 +14,7 @@
     </section>
     <section id="main">
         <div id="profile">
-            <div id="picture" style="background-image: url('../static/{{ picture }}');">
+            <div id="picture" style="background-image: url('/static/img/{{ picture }}');">
             </div>
             <div id="name">
                 {{ name }}
