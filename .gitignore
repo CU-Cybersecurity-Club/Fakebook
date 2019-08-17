@@ -14,6 +14,7 @@ virtualenv
 # Environment configurations
 .env
 
-# Database files
+# Files generated at runtime
 *.db
 *.sqlite3
+*.log
