@@ -6,7 +6,7 @@ from .settings import settings
 from flask import Flask
 from flask_socketio import SocketIO
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder=settings["TEMPLATE_FOLDER"])
 app.config["SECRET_KEY"] = settings["SECRET_KEY"]
 
 socketio = SocketIO()

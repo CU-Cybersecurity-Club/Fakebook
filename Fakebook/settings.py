@@ -26,3 +26,6 @@ settings["ACHIEVEMENTS_FILE"] = os.environ.setdefault(
 settings["PLAYERS_FILE"] = os.environ.setdefault(
     "PLAYERS", os.path.join("config", "players.json")
 )
+
+# Directory in which Flask can find the templates
+settings["TEMPLATE_FOLDER"] = os.path.join(BASE_DIR, "templates")
