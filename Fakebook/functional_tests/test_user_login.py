@@ -30,5 +30,5 @@ class UserLoginTests(FunctionalTest):
         password_box.send_keys(self.password)
         repassword_box.send_keys(self.password)
 
-        button = self.browser.find_element_by_id("signup-submit-button")
+        button = self.browser.find_element_by_name("signup-submit-button")
         button.click()
