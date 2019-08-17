@@ -3,7 +3,10 @@ Code for account management
 """
 
 from .settings import settings
+from flask import request
+import datetime
 import json
+import sqlite3
 
 # Global variables
 tokens = {}

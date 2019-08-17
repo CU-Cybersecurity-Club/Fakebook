@@ -2,6 +2,9 @@
 Implements Fakebook's chat functionality
 """
 
+import sqlite3
+import html
+
 
 def get_chats():
     query = "SELECT * FROM chats"
