@@ -1,9 +1,14 @@
 # Web application framework
 flask
 flask-socketio
+flask-testing
 
 # Code formatting / linting
 black
+
+# Testing
+selenium
+pytest
 
 # Misc
 python-dotenv
