@@ -8,7 +8,7 @@ class UserLoginTests(FunctionalTest):
     """
 
     def test_new_user_can_register(self):
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.get_server_url())
         self.assertEqual("Fakebook - Cybersecurity Club", self.browser.title)
 
         button = self.browser.find_element_by_id("signup-button")
@@ -77,5 +77,5 @@ class UserLoginTests(FunctionalTest):
         button.click()
 
         # She should now be returned to the /login page
-        self.assertEqual(self.browser.current_url, self.live_server_url + "/login")
+        self.assertEqual(self.browser.current_url, self.get_server_url() + "/login")
         self.assertTrue("Welcome to Fakebook beta!" in self.browser.page_source)

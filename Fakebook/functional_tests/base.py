@@ -8,7 +8,6 @@ import random
 import sqlite3 as sql
 import string
 
-FUNCTIONAL_TESTS_LIVESERVER_PORT = 8001
 FUNCTIONAL_TESTS_DATABASE = "test.db"
 settings["DATABASE"] = FUNCTIONAL_TESTS_DATABASE
 
@@ -28,13 +27,15 @@ class FunctionalTest(LiveServerTestCase):
 
     def create_app(self):
         app, sio = create_app(__name__)
-        app.config.update(LIVESERVER_PORT=FUNCTIONAL_TESTS_LIVESERVER_PORT)
+        app.config.update(LIVESERVER_PORT=0)
         return app
 
     def setUp(self):
         self.browser = webdriver.Firefox()
         dotenv.load_dotenv()
         if "STAGING_SERVER" in os.environ:
+            # Currently unused; will be useful for functional testing on a
+            # staging server.
             self.live_server_url = "https://" + os.environ["STAGING_SERVER"]
 
             # Authenticate for staging server
@@ -43,10 +44,7 @@ class FunctionalTest(LiveServerTestCase):
             url = "https://%s:%s@%s" % (username, password, staging_server)
             self.browser.get(url)
         else:
-            # For local development purposes only
-            self.live_server_url = (
-                f"http://localhost:{FUNCTIONAL_TESTS_LIVESERVER_PORT}"
-            )
+            self.live_server_url = self.get_server_url()
 
         # Create a test username and password
         self.email_address = "alice@example.com"
@@ -75,7 +73,7 @@ class FunctionalTest(LiveServerTestCase):
         """
         Register a new user to the site
         """
-        self.browser.get(self.live_server_url)
+        self.browser.get(self.get_server_url())
         self.browser.find_element_by_id("signup-button").click()
 
         self.browser.find_element_by_name("username").send_keys(self.username)
