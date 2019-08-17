@@ -11,7 +11,9 @@ class UserLoginTests(FunctionalTest):
         self.browser.get(self.live_server_url)
         self.assertEqual("Fakebook - Cybersecurity Club", self.browser.title)
 
-        self.browser.find_element_by_id("signup-button").click()
+        button = self.browser.find_element_by_id("signup-button")
+        self.assertEqual(button.text, "Create Account")
+        button.click()
 
         username_box = self.browser.find_element_by_name("username")
         password_box = self.browser.find_element_by_name("password")
@@ -32,6 +34,10 @@ class UserLoginTests(FunctionalTest):
         self.browser.find_element_by_name("signup-submit-button").click()
 
         # TODO: Ensure that Alice arrives at the homepage
+        self.assertTrue(
+            f"Welcome to the Fakebook beta, {self.username}!"
+            in self.browser.page_source
+        )
         self.fail("TODO")
 
     def test_same_user_cannot_register_twice(self):
@@ -59,3 +65,16 @@ class UserLoginTests(FunctionalTest):
 
         # TODO: ensure that the database has not changed
         self.fail("TODO")
+
+    def test_user_can_logout(self):
+        # Alice registers herself as a user for the site
+        self.register_user(self.username, self.password)
+
+        # Now she clicks the logout button to exit the site
+        button = self.browser.find_element_by_id("logout")
+        self.assertEqual(button.text, "Logout")
+        button.click()
+
+        # She should now be returned to the /login page
+        self.assertEqual(self.browser.current_url, self.live_server_url + "/login")
+        self.assertTrue("Welcome to Fakebook beta!" in self.browser.page_source)
