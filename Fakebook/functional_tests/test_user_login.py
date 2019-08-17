@@ -125,6 +125,8 @@ class UserLoginTests(FunctionalTest):
 
         # The site tells her that she used invalid credentials
         self.assertTrue("Invalid login!" in self.browser.page_source)
+        cookies = self.browser.get_cookies()
 
-        # TODO: show that Eve's cookies do not change
-        self.fail("TODO")
+        self.assertEqual(len(cookies), 1)
+        self.assertEqual(cookies[0]["name"], "token")
+        self.assertEqual(cookies[0]["value"], "None")
