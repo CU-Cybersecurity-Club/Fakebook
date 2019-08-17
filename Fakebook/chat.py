@@ -2,9 +2,8 @@
 Implements Fakebook's chat functionality
 """
 
-from .app import socketio
 from .users import tokens, get_picture
-from . import views
+from . import app, views
 from datetime import datetime
 import sqlite3
 from flask import request
@@ -34,11 +33,10 @@ def create_chat(author, posted, content):
 
 
 """
-Handling live chat
+Handlers for live chat
 """
 
 
-@socketio.on("chat")
 def handle_message(json):
     user, _, _, _ = tokens.get(json["token"], (None, None))
     if user:

@@ -9,7 +9,5 @@ import string
 import sqlite3
 import re
 
-from .posts import *
-from .settings import *
-from .users import *
-from .views import *
+from .app import create_app
+from .settings import settings

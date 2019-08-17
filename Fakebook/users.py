@@ -2,7 +2,7 @@
 Code for account management
 """
 
-from .achievements import register_achievement
+from . import achievements as achv
 from .settings import settings
 from flask import request, render_template, redirect, make_response
 from hashlib import md5
@@ -29,7 +29,7 @@ def get_current_user(request):
             if current_player and current_player != origin_player:
                 print(current_player)
                 print(origin_player)
-                register_achievement(current_player, "stolen-token")
+                achv.register_achievement(current_player, "stolen-token")
             return name
     return None
 
@@ -63,7 +63,7 @@ def verify_credentials(username, password, player=None):
             for q in query.split(";"):
                 user = db.execute(q, (username, pass_hash)).fetchone()
         except Exception as e:
-            register_achievement(player, "sql-error")
+            achv.register_achievement(player, "sql-error")
             raise Exception("Error with query: %s (%s)" % (query, e))
 
     # Achievements
@@ -72,20 +72,20 @@ def verify_credentials(username, password, player=None):
     #     if user != good_user:
     #         first_user = db.execute('SELECT username FROM users').fetchone()
     #         #if user == first_user and username.find(first_user[0]) == -1:
-    #         #    register_achievement(player, 'sql-login')
+    #         #    achv.register_achievement(player, 'sql-login')
     #         #else:
-    #         #    register_achievement(player, 'sql-specific-login')
+    #         #    achv.register_achievement(player, 'sql-specific-login')
     #     elif user:
     #         if user[0] == "Mel":
-    #             register_achievement(player, 'password-mel')
+    #             achv.register_achievement(player, 'password-mel')
     #         if user[0] == "CATl0v3r":
-    #             register_achievement(player, 'password-catl0v3r')
+    #             achv.register_achievement(player, 'password-catl0v3r')
     #         elif user[0] == "Grace":
-    #             register_achievement(player, 'password-grace')
+    #             achv.register_achievement(player, 'password-grace')
     #         elif user[0] == "Admin":
-    #             register_achievement(player, 'password-admin')
+    #             achv.register_achievement(player, 'password-admin')
     #         elif user[0] == "nobodyknowsme":
-    #             register_achievement(player, 'find-comment')
+    #             achv.register_achievement(player, 'find-comment')
 
     return user[0] if user else None
 
