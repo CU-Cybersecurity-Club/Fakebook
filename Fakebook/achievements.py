@@ -4,7 +4,7 @@ Code for player scoring, achievements, etc.
 
 from .settings import settings
 from . import users
-from flask import request
+from flask import request, render_template
 import json
 
 # Global variables
@@ -49,7 +49,7 @@ def scoreboard():
         achievements=sorted(
             map(format_achievement, achievements.items()), key=lambda x: x[1]
         ),
-        players=sorted(map(format_player, players.items())),
+        players=sorted(map(format_player, users.players.items())),
     )
 
 
