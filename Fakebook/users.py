@@ -3,7 +3,7 @@ Code for account management
 """
 
 from . import achievements as achv
-from . import posts
+from . import posts, chat
 from .settings import settings
 from flask import request, render_template, redirect, make_response
 from hashlib import md5
