@@ -15,6 +15,14 @@ Base class for functional tests
 
 
 class FunctionalTest(LiveServerTestCase):
+    """
+    Base class for creating functional tests for the Fakebook app
+    """
+
+    """
+    Functions to comply with the LiveServerTestCase API
+    """
+
     def create_app(self):
         app, sio = create_app(__name__)
         app.config.update(LIVESERVER_PORT=FUNCTIONAL_TESTS_LIVESERVER_PORT)
@@ -45,9 +53,26 @@ class FunctionalTest(LiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
+    """
+    Helper functions for the FunctionalTest base class
+    """
+
+    def register_user(self, username, password):
+        """
+        Register a new user to the site
+        """
+        self.browser.get(self.live_server_url)
+        self.browser.find_element_by_id("signup-button").click()
+
+        self.browser.find_element_by_name("username").send_keys(self.username)
+        self.browser.find_element_by_name("password").send_keys(self.password)
+        self.browser.find_element_by_name("repassword").send_keys(self.password)
+
+        self.browser.find_element_by_name("signup-submit-button").click()
+
 
 """
-Helper functions
+General helper functions
 """
 
 
