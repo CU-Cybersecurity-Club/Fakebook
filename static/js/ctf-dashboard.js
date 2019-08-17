@@ -14,7 +14,7 @@ function closeNav() {
   document.getElementById("overlay").style.background = "#0000";
   document.getElementById("overlay").style.pointerEvents = "none";
   var player = document.getElementById("ctf-player").value;
-  achieve(player, 'created-account');
+  achieve(player, 'created_account');
 }
 
 function disableDashboard() {
@@ -47,5 +47,5 @@ if(!player) {
   openNav();
 }
 else {
-	achieve(player, 'created-account');
+	achieve(player, 'created_account');
 }

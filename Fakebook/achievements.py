@@ -6,6 +6,7 @@ from .settings import settings
 from . import users
 from flask import request, render_template
 import json
+import sqlite3
 
 # Global variables
 with open(settings["ACHIEVEMENTS_FILE"], "r") as f:
@@ -15,6 +16,11 @@ with open(settings["ACHIEVEMENTS_FILE"], "r") as f:
 def register_achievement(player, achievement_id):
     # with open('achievements.json', 'w') as f:
     #     f.write(json.dumps(achievements))
+    with sqlite3.connect(settings["DATABASE"]) as db:
+        # TODO: check that player exists (???), avoid possible SQLi
+        assert achievement_id in achievements
+        command = f"UPDATE achievements SET {achievement_id}=1 WHERE name=?"
+        db.execute(command, (player,))
 
     if player and achievement_id in achievements:
         if player not in users.players:

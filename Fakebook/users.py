@@ -30,7 +30,7 @@ def get_current_user(request):
             if current_player and current_player != origin_player:
                 print(current_player)
                 print(origin_player)
-                achv.register_achievement(current_player, "stolen-token")
+                achv.register_achievement(current_player, "stolen_token")
             return name
     return None
 
@@ -64,7 +64,7 @@ def verify_credentials(username, password, player=None):
             for q in query.split(";"):
                 user = db.execute(q, (username, pass_hash)).fetchone()
         except Exception as e:
-            achv.register_achievement(player, "sql-error")
+            achv.register_achievement(player, "sql_error")
             raise Exception("Error with query: %s (%s)" % (query, e))
 
     # Achievements
