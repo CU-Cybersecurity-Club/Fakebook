@@ -71,13 +71,15 @@ class UserLoginTests(FunctionalTest):
         # Eve tries again, this time using a different password. The page once
         # again tells her the username is already taken. In the database, the
         # entry for the user does not change.
+        query = "SELECT * FROM users WHERE username=?"
+        original = self.db.execute(query, (self.username,)).fetchall()
+
         self.register_user(self.username, generate_random_password(32))
         self.assertTrue(
             f"Username {self.username} already taken!" in self.browser.page_source
         )
 
-        # TODO: ensure that the database has not changed
-        self.fail("TODO")
+        self.assertEqual(original, self.db.execute(query, (self.username,)).fetchall())
 
     def test_user_can_logout(self):
         # Alice registers herself as a user for the site
