@@ -17,13 +17,13 @@ DOTENV_PATH = os.path.join(BASE_DIR, ".env")
 if os.path.exists(DOTENV_PATH):
     dotenv.load_dotenv(DOTENV_PATH)
 
-settings["SECRET_KEY"] = os.environ.setdefault("SECRET_KEY", "secret!")
-settings["PORT"] = os.environ.setdefault("PORT", "8000")
+settings["SECRET_KEY"] = os.environ.get("SECRET_KEY", "secret!")
+settings["PORT"] = os.environ.get("PORT", "8000")
 
-settings["ACHIEVEMENTS_FILE"] = os.environ.setdefault(
+settings["ACHIEVEMENTS_FILE"] = os.environ.get(
     "ACHIEVEMENTS", os.path.join("config", "achievements.json")
 )
-settings["PLAYERS_FILE"] = os.environ.setdefault(
+settings["PLAYERS_FILE"] = os.environ.get(
     "PLAYERS", os.path.join("config", "players.json")
 )
 
