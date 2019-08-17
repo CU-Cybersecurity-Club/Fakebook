@@ -45,6 +45,24 @@ def format_achievement(e):
 
 
 def scoreboard():
+    with sqlite3.connect(settings["DATABASE"]) as db:
+        players = db.execute("SELECT * FROM achievements").fetchall()
+
+        # Convert each score into a 3-tuple:
+        # 1. The name of the player
+        # 2. The total score
+        # 3. A binary array saying which achievements a player has so far
+        players = [(p[0], sum(p[1:]), (p[1:])) for p in players]
+
+    return render_template(
+        "scoreboard.html",
+        achievements=sorted(
+            map(format_achievement, achievements.items()), key=lambda x: x[1]
+        ),
+        players=players,
+    )
+
+    """
     return render_template(
         "scoreboard.html",
         achievements=sorted(
@@ -52,6 +70,7 @@ def scoreboard():
         ),
         players=sorted(map(format_player, users.players.items())),
     )
+    """
 
 
 def achieve():

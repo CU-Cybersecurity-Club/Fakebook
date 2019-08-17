@@ -24,14 +24,14 @@
             {% endfor %}
           </thead>
           <tbody>
-            {% for (player, achieved, score) in players %}
+            {% for (player, score, achieved) in players %}
               <tr>
                 <td>{{ player }}</td>
                 <td>{{ score }}</td>
-                {% for (ident, _, _, _) in achievements %}
-                  <td>
-                    {% if ident in achieved %}&#10004;{% endif %}
-                  </td>
+                {% for is_achieved in achieved %}
+                <td>
+                	{% if is_achieved == 1 %}&#10004;{% endif %}
+                </td>
                 {% endfor %}
               </tr>
             {% endfor %}

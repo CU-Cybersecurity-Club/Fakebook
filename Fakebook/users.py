@@ -91,7 +91,7 @@ def verify_credentials(username, password, player=None):
     return user[0] if user else None
 
 
-def create_user(username, password):
+def create_user(username, password, player):
     assert not user_exists(username)
 
     pass_hash = md5(password.encode("utf-8")).hexdigest()
@@ -105,7 +105,7 @@ def create_user(username, password):
         fields = f"({','.join(c[1] for c in cols)})"
         values = f"(?, {','.join('0' for _ in range(len(cols)-1))})"
         query = f"INSERT INTO achievements {fields} VALUES {values}"
-        db.execute(query, (username,))
+        db.execute(query, (player,))
 
 
 def generate_token(user, player=None, ip=None, size=8):
@@ -156,7 +156,8 @@ def signup():
     elif request.form["password"] != request.form["repassword"]:
         return render_template("signup.html", different_passwords=True)
     else:
-        create_user(request.form["username"], request.form["password"])
+        player = request.cookies.get("player")
+        create_user(request.form["username"], request.form["password"], player)
 
         resp = make_response(redirect("/"))
         resp.set_cookie("token", generate_token(request.form["username"]))
