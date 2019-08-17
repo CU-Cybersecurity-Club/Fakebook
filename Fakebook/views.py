@@ -4,16 +4,8 @@ Request routing for the Fakebook app
 
 from .app import app, socketio
 from .achievements import achievements, register_achievement
-from .users import (
-    get_current_user,
-    verify_credentials,
-    user_exists,
-    create_user,
-    tokens,
-    players,
-)
+from .users import get_current_user, get_picture
 from flask import redirect, request, render_template, make_response
-from flask_socketio import send, emit
 from datetime import datetime, timedelta
 from . import chat, users, posts, achievements
 import html
@@ -42,15 +34,6 @@ def get_posts(username):
         )
 
     return "\n".join(map(format_post, posts))
-
-
-def get_picture(username):
-    query = "SELECT picture FROM users WHERE username=?"
-
-    with sqlite3.connect("data.db") as db:
-        picture = db.execute(query, (username,)).fetchone()
-
-    return picture[0] if picture else "default.png"
 
 
 def get_search_results(search):

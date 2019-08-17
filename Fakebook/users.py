@@ -34,6 +34,15 @@ def get_current_user(request):
     return None
 
 
+def get_picture(username):
+    query = "SELECT picture FROM users WHERE username=?"
+
+    with sqlite3.connect("data.db") as db:
+        picture = db.execute(query, (username,)).fetchone()
+
+    return picture[0] if picture else "default.png"
+
+
 def user_exists(username):
     if "'" in username:
         return "ERROR"

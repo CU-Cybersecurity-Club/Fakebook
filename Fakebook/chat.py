@@ -2,8 +2,13 @@
 Implements Fakebook's chat functionality
 """
 
+from .app import socketio
+from .users import tokens, get_picture
 from . import views
+from datetime import datetime
 import sqlite3
+from flask import request
+from flask_socketio import send, emit
 import html
 
 
@@ -39,7 +44,7 @@ def handle_message(json):
     if user:
         time = datetime.now().strftime("%b %d %I:%M %p")
         msg = html.escape(json["msg"])
-        chat.create_chat(user, time, msg)
+        create_chat(user, time, msg)
         emit(
             "post",
             {"user": user, "msg": msg, "time": time, "picture": get_picture(user)},

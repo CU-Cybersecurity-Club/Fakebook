@@ -4,6 +4,7 @@ Code for player scoring, achievements, etc.
 
 from .settings import settings
 from . import users
+from flask import request
 import json
 
 # Global variables
