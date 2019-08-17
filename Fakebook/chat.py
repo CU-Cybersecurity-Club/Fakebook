@@ -2,6 +2,7 @@
 Implements Fakebook's chat functionality
 """
 
+from . import views
 import sqlite3
 import html
 
@@ -14,7 +15,7 @@ def get_chats():
 
     def format_chat(chat):
         author, time, content = chat
-        return (author, time, html.unescape(content), get_picture(author))
+        return (author, time, html.unescape(content), views.get_picture(author))
 
     return map(format_chat, chats)
 

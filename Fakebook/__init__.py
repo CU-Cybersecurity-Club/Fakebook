@@ -9,7 +9,6 @@ import string
 import sqlite3
 import re
 
-from .chat import *
 from .posts import *
 from .settings import *
 from .users import *

@@ -4,9 +4,79 @@ Request routing for the Fakebook app
 
 from .app import app, socketio
 from .achievements import register_achievement
-from .users import get_current_user, verify_credentials
+from .users import (
+    get_current_user,
+    verify_credentials,
+    user_exists,
+    create_user,
+    tokens,
+)
 from flask import redirect, request, render_template, make_response
+from datetime import datetime, timedelta
+from . import chat
 import json
+import random
+import string
+import sqlite3
+
+"""
+Code to help render pages
+"""
+
+
+def generate_token(user, player=None, ip=None, size=8):
+    token = "".join(
+        random.choice(string.ascii_uppercase + string.digits) for _ in range(size)
+    )
+    tokens[token] = (user, datetime.now() + timedelta(hours=24), player, ip)
+
+    return token
+
+
+def get_posts(username):
+    query = "SELECT * FROM posts WHERE author=?"
+
+    with sqlite3.connect("data.db") as db:
+        posts = db.execute(query, (username,)).fetchall()
+
+    def format_post(post):
+        _, time, content, player = post
+        return (
+            '<div class="post"><script>player="%s"</script><div class="time">%s</div>%s</div>'
+            % (player, time, content)
+        )
+
+    return "\n".join(map(format_post, posts))
+
+
+def get_picture(username):
+    query = "SELECT picture FROM users WHERE username=?"
+
+    with sqlite3.connect("data.db") as db:
+        picture = db.execute(query, (username,)).fetchone()
+
+    return picture[0] if picture else "default.png"
+
+
+def get_search_results(search):
+    query = "SELECT username, picture FROM users WHERE instr(username, ?) > 0"
+
+    with sqlite3.connect("data.db") as db:
+        results = db.execute(query, (search,)).fetchmany(100)
+
+    return results
+
+
+def reset_page(author):
+    query = "DELETE FROM posts Where author is '%s'" % author
+
+    with sqlite3.connect("data.db") as db:
+        db.execute(query)
+
+
+"""
+Request routing code
+"""
 
 
 @app.route("/")
@@ -18,7 +88,7 @@ def index():
             name=user,
             posts=get_posts(user),
             picture=get_picture(user),
-            chats=get_chats(),
+            chats=chat.get_chats(),
         )
     return redirect("login")
 
@@ -140,7 +210,7 @@ def userPage(user):
         name=user,
         posts=get_posts(user),
         picture=get_picture(user),
-        chats=get_chats(),
+        chats=chat.get_chats(),
         auth=auth,
     )
 
@@ -200,7 +270,7 @@ def handle_message(json):
     if user:
         time = datetime.now().strftime("%b %d %I:%M %p")
         msg = html.escape(json["msg"])
-        create_chat(user, time, msg)
+        chat.create_chat(user, time, msg)
         emit(
             "post",
             {"user": user, "msg": msg, "time": time, "picture": get_picture(user)},
