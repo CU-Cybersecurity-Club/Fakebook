@@ -46,6 +46,7 @@ class UserLoginTests(FunctionalTest):
         """
         # Alice registers herself as a user for the site
         self.register_user(self.username, self.password)
+        self.browser.find_element_by_id("logout").click()
 
         # Now Eve tries to register herself as Alice, using the same username
         # and password. The site tells her that the username has already been
