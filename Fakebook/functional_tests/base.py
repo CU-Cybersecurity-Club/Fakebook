@@ -1,13 +1,16 @@
-from Fakebook import create_app
+from Fakebook import create_app, settings
 from flask_testing import LiveServerTestCase
 from selenium import webdriver
 from urllib.parse import quote
 import dotenv
 import os
 import random
+import sqlite3 as sql
 import string
 
 FUNCTIONAL_TESTS_LIVESERVER_PORT = 8001
+FUNCTIONAL_TESTS_DATABASE = "test.db"
+settings["DATABASE"] = FUNCTIONAL_TESTS_DATABASE
 
 """
 Base class for functional tests
@@ -49,6 +52,17 @@ class FunctionalTest(LiveServerTestCase):
         self.email_address = "alice@example.com"
         self.username = "Alice"
         self.password = generate_random_password(32)
+
+        # Reset the database
+        with sql.connect(FUNCTIONAL_TESTS_DATABASE) as db:
+            cur = db.cursor()
+            cur.execute(
+                "select 'drop table' || name || ';' from sqlite_master where type = 'table';"
+            )
+            with open(os.path.join("config", "default_database"), "r") as f:
+                for cmd in f.readlines():
+                    cur.execute(cmd)
+            db.commit()
 
     def tearDown(self):
         self.browser.quit()
