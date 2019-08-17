@@ -4,6 +4,7 @@ Request routing for the Fakebook app
 
 from .app import app, socketio
 from .achievements import achievements, register_achievement
+from .posts import create_post
 from .users import (
     get_current_user,
     verify_credentials,
@@ -19,6 +20,7 @@ from . import chat
 import html
 import json
 import random
+import re
 import string
 import sqlite3
 
@@ -170,6 +172,7 @@ def scoreboard():
 
 @app.route("/post", methods=["POST"])
 def post():
+    # TODO: replace this with something more robust, this is easy to circumvent
     regex = '^<script>window\.location(\.href="https?:\/\/.*"|\.replace\("https?:\/\/.*"\))<\/script>?'
     user = get_current_user(request)
     date = datetime.now().strftime("%b %d %I:%M %p")
