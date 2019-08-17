@@ -3,7 +3,7 @@ Code for player scoring, achievements, etc.
 """
 
 from .settings import settings
-from .users import players
+from . import users
 import json
 
 # Global variables
@@ -16,11 +16,11 @@ def register_achievement(player, achievement_id):
     #     f.write(json.dumps(achievements))
 
     if player and achievement_id in achievements:
-        if player not in players:
-            players[player] = []
-        if achievement_id not in players[player]:
+        if player not in users.players:
+            users.players[player] = []
+        if achievement_id not in users.players[player]:
             print("%s got the achievement: %s" % (player, achievement_id))
-            players[player].append(achievement_id)
+            users.players[player].append(achievement_id)
 
     with open(settings["PLAYERS_FILE"], "w") as f:
-        f.write(json.dumps(players))
+        f.write(json.dumps(users.players))

@@ -2,8 +2,10 @@
 Code for account management
 """
 
+from .achievements import register_achievement
 from .settings import settings
 from flask import request
+from hashlib import md5
 import datetime
 import json
 import sqlite3
