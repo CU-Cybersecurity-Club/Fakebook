@@ -15,7 +15,7 @@ from .users import (
 from flask import redirect, request, render_template, make_response
 from flask_socketio import send, emit
 from datetime import datetime, timedelta
-from . import chat, users, posts
+from . import chat, users, posts, achievements
 import html
 import json
 import random
@@ -72,11 +72,14 @@ def reset_page(author):
 """
 Request routing code
 """
+app.add_url_rule("/achieve", "achieve", achievements.achieve, methods=["POST"])
+app.add_url_rule("/scoreboard", "scoreboard", achievements.scoreboard, methods=["GET"])
+
+app.add_url_rule("/post", "post", posts.post, methods=["POST"])
 
 app.add_url_rule("/login", "login", users.login, methods=["GET", "POST"])
-app.add_url_rule("/signup", "signup", users.signup, methods=["GET", "POST"])
 app.add_url_rule("/logout", "logout", users.logout, methods=["GET"])
-app.add_url_rule("/post", "post", posts.post, methods=["POST"])
+app.add_url_rule("/signup", "signup", users.signup, methods=["GET", "POST"])
 
 
 @app.route("/")
@@ -91,26 +94,6 @@ def index():
             chats=chat.get_chats(),
         )
     return redirect("login")
-
-
-@app.route("/scoreboard", methods=["GET"])
-def scoreboard():
-    def format_player(e):
-        player, achieved = e
-        score = sum([achievements[ident][0] for ident in achieved])
-        return (player, achieved, score)
-
-    def format_achievement(e):
-        ident, (score, name, desc) = e
-        return (ident, score, name, desc)
-
-    return render_template(
-        "scoreboard.html",
-        achievements=sorted(
-            map(format_achievement, achievements.items()), key=lambda x: x[1]
-        ),
-        players=sorted(map(format_player, players.items())),
-    )
 
 
 @app.route("/reset", methods=["POST"])
@@ -182,13 +165,6 @@ def hidden():
         + str(output)
         + "</body>"
     )
-
-
-@app.route("/achieve", methods=["POST"])
-def achieve():
-    data = json.loads(request.data.decode("utf-8"))
-    register_achievement(data.get("player", None), data.get("id", None))
-    return ("", 204)
 
 
 @app.errorhandler(500)
