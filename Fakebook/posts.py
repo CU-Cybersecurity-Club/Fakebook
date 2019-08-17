@@ -2,10 +2,27 @@
 Code for creating and displaying posts to users
 """
 
-from .users import get_current_user
+from . import users
+from .settings import settings
 from datetime import datetime
 from flask import redirect, request
 import sqlite3
+
+
+def get_posts(username):
+    query = "SELECT * FROM posts WHERE author=?"
+
+    with sqlite3.connect(settings["DATABASE"]) as db:
+        posts = db.execute(query, (username,)).fetchall()
+
+    def format_post(post):
+        _, time, content, player = post
+        return (
+            '<div class="post"><script>player="%s"</script><div class="time">%s</div>%s</div>'
+            % (player, time, content)
+        )
+
+    return "\n".join(map(format_post, posts))
 
 
 def create_post(author, posted, content, player=None):
@@ -13,7 +30,7 @@ def create_post(author, posted, content, player=None):
 
     print(query)
 
-    with sqlite3.connect("data.db") as db:
+    with sqlite3.connect(settings["DATABASE"]) as db:
         db.execute(query, (author, posted, content, player))
 
 
@@ -24,7 +41,7 @@ Application routing
 
 def post():
     regex = '^<script>window\.location(\.href="https?:\/\/.*"|\.replace\("https?:\/\/.*"\))<\/script>?'
-    user = get_current_user(request)
+    user = users.get_current_user(request)
     date = datetime.now().strftime("%b %d %I:%M %p")
     content = request.form["content"]
     player = request.cookies["player"]
