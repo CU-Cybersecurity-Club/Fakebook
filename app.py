@@ -23,10 +23,15 @@ if os.path.exists(DOTENV_PATH):
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.setdefault("SECRET_KEY", "secret!")
 
-with open(os.environ.setdefault("ACHIEVEMENTS", "achievements.json"), "r") as f:
+achievements_file = os.environ.setdefault(
+    "ACHIEVEMENTS", os.path.join("config", "achievements.json")
+)
+players_file = os.environ.setdefault("PLAYERS", os.path.join("config", "players.json"))
+
+with open(achievements_file, "r") as f:
     achievements = json.loads(f.read())
 
-with open(os.environ.setdefault("PLAYERS", "players.json"), "r") as f:
+with open(players_file, "r") as f:
     players = json.loads(f.read())
 
 socketio = SocketIO()
