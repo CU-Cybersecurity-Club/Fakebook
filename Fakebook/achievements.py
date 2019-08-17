@@ -14,8 +14,6 @@ with open(settings["ACHIEVEMENTS_FILE"], "r") as f:
 
 # Function definitions
 def register_achievement(player, achievement_id):
-    # with open('achievements.json', 'w') as f:
-    #     f.write(json.dumps(achievements))
     with sqlite3.connect(settings["DATABASE"]) as db:
         # TODO: check that player exists (???), avoid possible SQLi
         assert achievement_id in achievements
@@ -28,9 +26,6 @@ def register_achievement(player, achievement_id):
         if achievement_id not in users.players[player]:
             print("%s got the achievement: %s" % (player, achievement_id))
             users.players[player].append(achievement_id)
-
-    with open(settings["PLAYERS_FILE"], "w") as f:
-        f.write(json.dumps(users.players))
 
 
 """

@@ -95,10 +95,17 @@ def create_user(username, password):
     assert not user_exists(username)
 
     pass_hash = md5(password.encode("utf-8")).hexdigest()
-    query = "INSERT INTO users (username, password_hash, picture) VALUES (?, ?, 'default.png')"
 
     with sqlite3.connect(settings["DATABASE"]) as db:
+        query = "INSERT INTO users (username, password_hash, picture) VALUES (?, ?, 'default.png')"
         user = db.execute(query, (username, pass_hash))
+
+        # Set all of the users' achievements to 0
+        cols = db.execute("PRAGMA table_info(achievements)").fetchall()
+        fields = f"({','.join(c[1] for c in cols)})"
+        values = f"(?, {','.join('0' for _ in range(len(cols)-1))})"
+        query = f"INSERT INTO achievements {fields} VALUES {values}"
+        db.execute(query, (username,))
 
 
 def generate_token(user, player=None, ip=None, size=8):
