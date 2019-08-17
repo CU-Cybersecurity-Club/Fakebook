@@ -22,7 +22,7 @@ Code to help render pages
 def get_posts(username):
     query = "SELECT * FROM posts WHERE author=?"
 
-    with sqlite3.connect("data.db") as db:
+    with sqlite3.connect(settings["DATABASE"]) as db:
         posts = db.execute(query, (username,)).fetchall()
 
     def format_post(post):
@@ -38,7 +38,7 @@ def get_posts(username):
 def get_search_results(search):
     query = "SELECT username, picture FROM users WHERE instr(username, ?) > 0"
 
-    with sqlite3.connect("data.db") as db:
+    with sqlite3.connect(settings["DATABASE"]) as db:
         results = db.execute(query, (search,)).fetchmany(100)
 
     return results
@@ -47,7 +47,7 @@ def get_search_results(search):
 def reset_page(author):
     query = "DELETE FROM posts Where author is '%s'" % author
 
-    with sqlite3.connect("data.db") as db:
+    with sqlite3.connect(settings["DATABASE"]) as db:
         db.execute(query)
 
 
@@ -126,17 +126,17 @@ def hidden():
     current_player = request.cookies.get("player", None)
     register_achievement(current_player, "unlisted-path")
 
-    with sqlite3.connect("data.db") as db:
+    with sqlite3.connect(settings["DATABASE"]) as db:
         data = db.execute(query).fetchall()
 
     query = "SELECT * FROM posts"
 
-    with sqlite3.connect("data.db") as db:
+    with sqlite3.connect(settings["DATABASE"]) as db:
         data += db.execute(query).fetchall()
 
     query = "SELECT * FROM chats"
 
-    with sqlite3.connect("data.db") as db:
+    with sqlite3.connect(settings["DATABASE"]) as db:
         data += db.execute(query).fetchall()
 
     output = ""

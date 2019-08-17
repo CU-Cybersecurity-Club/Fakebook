@@ -37,7 +37,7 @@ def get_current_user(request):
 def get_picture(username):
     query = "SELECT picture FROM users WHERE username=?"
 
-    with sqlite3.connect("data.db") as db:
+    with sqlite3.connect(settings["DATABASE"]) as db:
         picture = db.execute(query, (username,)).fetchone()
 
     return picture[0] if picture else "default.png"
@@ -48,7 +48,7 @@ def user_exists(username):
         return "ERROR"
     query = "SELECT username FROM users WHERE username=?"
 
-    with sqlite3.connect("data.db") as db:
+    with sqlite3.connect(settings["DATABASE"]) as db:
         user = db.execute(query, (username,)).fetchone()
 
     return bool(user)
@@ -58,7 +58,7 @@ def verify_credentials(username, password, player=None):
     pass_hash = md5(password.encode("utf-8")).hexdigest()
     query = "SELECT username FROM users WHERE username=? AND password_hash=?"
 
-    with sqlite3.connect("data.db") as db:
+    with sqlite3.connect(settings["DATABASE"]) as db:
         try:
             for q in query.split(";"):
                 user = db.execute(q, (username, pass_hash)).fetchone()
@@ -96,7 +96,7 @@ def create_user(username, password):
     pass_hash = md5(password.encode("utf-8")).hexdigest()
     query = "INSERT INTO users (username, password_hash, picture) VALUES (?, ?, 'default.png')"
 
-    with sqlite3.connect("data.db") as db:
+    with sqlite3.connect(settings["DATABASE"]) as db:
         user = db.execute(query, (username, pass_hash))
 
 

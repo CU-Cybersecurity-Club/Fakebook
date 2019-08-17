@@ -13,7 +13,7 @@ def create_post(author, posted, content, player=None):
 
     print(query)
 
-    with sqlite3.connect("data.db") as db:
+    with sqlite3.connect(settings["DATABASE"]) as db:
         db.execute(query, (author, posted, content, player))
 
 
