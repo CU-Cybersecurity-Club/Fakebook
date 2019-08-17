@@ -13,8 +13,10 @@ from .users import (
     players,
 )
 from flask import redirect, request, render_template, make_response
+from flask_socketio import send, emit
 from datetime import datetime, timedelta
 from . import chat
+import html
 import json
 import random
 import string
