@@ -13,3 +13,7 @@ virtualenv
 
 # Environment configurations
 .env
+
+# Database files
+*.db
+*.sqlite3
