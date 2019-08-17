@@ -12,7 +12,10 @@ import string
 random.seed(0)
 
 FUNCTIONAL_TESTS_DATABASE = "test.db"
+FUNCTIONAL_TESTS_PLAYERS = os.path.join("config", "test.players.json")
+
 settings["DATABASE"] = FUNCTIONAL_TESTS_DATABASE
+settings["PLAYERS_FILE"] = FUNCTIONAL_TESTS_PLAYERS
 
 """
 Base class for functional tests
@@ -56,7 +59,7 @@ class FunctionalTest(LiveServerTestCase):
         self.password = generate_random_password(32)
 
         # Reset the database
-        self.db = sql.connect(FUNCTIONAL_TESTS_DATABASE)
+        self.db = sql.connect(settings["DATABASE"])
         cur = self.db.cursor()
         cur.execute(
             "select 'drop table' || name || ';' from sqlite_master where type = 'table';"
@@ -65,6 +68,10 @@ class FunctionalTest(LiveServerTestCase):
             for cmd in f.readlines():
                 cur.execute(cmd)
         self.db.commit()
+
+        # Create a players.json and an achievements.json for this test
+        with open(settings["PLAYERS_FILE"], "w") as f:
+            f.write("{}")
 
     def tearDown(self):
         self.browser.quit()
