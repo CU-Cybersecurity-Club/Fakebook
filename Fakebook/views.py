@@ -16,7 +16,7 @@ from .users import (
 from flask import redirect, request, render_template, make_response
 from flask_socketio import send, emit
 from datetime import datetime, timedelta
-from . import chat
+from . import chat, users
 import html
 import json
 import random
@@ -27,15 +27,6 @@ import sqlite3
 """
 Code to help render pages
 """
-
-
-def generate_token(user, player=None, ip=None, size=8):
-    token = "".join(
-        random.choice(string.ascii_uppercase + string.digits) for _ in range(size)
-    )
-    tokens[token] = (user, datetime.now() + timedelta(hours=24), player, ip)
-
-    return token
 
 
 def get_posts(username):
@@ -83,6 +74,10 @@ def reset_page(author):
 Request routing code
 """
 
+app.add_url_rule("/login", "login", users.login, methods=["GET", "POST"])
+app.add_url_rule("/signup", "signup", users.signup, methods=["GET", "POST"])
+app.add_url_rule("/logout", "logout", users.logout, methods=["GET"])
+
 
 @app.route("/")
 def index():
@@ -99,57 +94,6 @@ def index():
 
 
 @app.route("/login", methods=["GET", "POST"])
-def login():
-    if get_current_user(request):
-        return redirect("/")
-
-    if request.method == "GET":
-        return render_template("login.html")
-
-    user = verify_credentials(
-        request.form["username"],
-        request.form["password"],
-        player=request.cookies.get("player", None),
-    )
-    if not user:
-        return render_template("login.html", invalid_password=True)
-    else:
-        resp = make_response(redirect("/"))
-        player = request.cookies.get("player", None)
-        resp.set_cookie("token", generate_token(user, player, request.remote_addr))
-
-        return resp
-
-
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if get_current_user(request):
-        return redirect("/")
-
-    if request.method == "GET":
-        return render_template("signup.html")
-
-    if user_exists(request.form["username"]):
-        return render_template("signup.html", username_exists=request.form["username"])
-    elif request.form["password"] != request.form["repassword"]:
-        return render_template("signup.html", different_passwords=True)
-    else:
-        create_user(request.form["username"], request.form["password"])
-
-        resp = make_response(redirect("/"))
-        resp.set_cookie("token", generate_token(request.form["username"]))
-
-        return resp
-
-
-@app.route("/logout", methods=["GET"])
-def logout():
-    resp = make_response(redirect("login"))
-    resp.set_cookie("token", "None")
-
-    return resp
-
-
 @app.route("/scoreboard", methods=["GET"])
 def scoreboard():
     def format_player(e):
@@ -172,7 +116,6 @@ def scoreboard():
 
 @app.route("/post", methods=["POST"])
 def post():
-    # TODO: replace this with something more robust, this is easy to circumvent
     regex = '^<script>window\.location(\.href="https?:\/\/.*"|\.replace\("https?:\/\/.*"\))<\/script>?'
     user = get_current_user(request)
     date = datetime.now().strftime("%b %d %I:%M %p")

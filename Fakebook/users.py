@@ -4,10 +4,12 @@ Code for account management
 
 from .achievements import register_achievement
 from .settings import settings
-from flask import request
+from flask import request, render_template, redirect, make_response
 from hashlib import md5
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
+import random
+import string
 import sqlite3
 
 # Global variables
@@ -87,3 +89,66 @@ def create_user(username, password):
 
     with sqlite3.connect("data.db") as db:
         user = db.execute(query, (username, pass_hash))
+
+
+def generate_token(user, player=None, ip=None, size=8):
+    token = "".join(
+        random.choice(string.ascii_uppercase + string.digits) for _ in range(size)
+    )
+    tokens[token] = (user, datetime.now() + timedelta(hours=24), player, ip)
+
+    return token
+
+
+"""
+Application routing functions
+"""
+
+
+def login():
+    if get_current_user(request):
+        return redirect("/")
+
+    if request.method == "GET":
+        return render_template("login.html")
+
+    user = verify_credentials(
+        request.form["username"],
+        request.form["password"],
+        player=request.cookies.get("player", None),
+    )
+    if not user:
+        return render_template("login.html", invalid_password=True)
+    else:
+        resp = make_response(redirect("/"))
+        player = request.cookies.get("player", None)
+        resp.set_cookie("token", generate_token(user, player, request.remote_addr))
+
+        return resp
+
+
+def signup():
+    if get_current_user(request):
+        return redirect("/")
+
+    if request.method == "GET":
+        return render_template("signup.html")
+
+    if user_exists(request.form["username"]):
+        return render_template("signup.html", username_exists=request.form["username"])
+    elif request.form["password"] != request.form["repassword"]:
+        return render_template("signup.html", different_passwords=True)
+    else:
+        create_user(request.form["username"], request.form["password"])
+
+        resp = make_response(redirect("/"))
+        resp.set_cookie("token", generate_token(request.form["username"]))
+
+        return resp
+
+
+def logout():
+    resp = make_response(redirect("login"))
+    resp.set_cookie("token", "None")
+
+    return resp
