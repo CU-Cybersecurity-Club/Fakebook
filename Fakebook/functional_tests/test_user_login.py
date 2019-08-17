@@ -8,13 +8,18 @@ class UserLoginTests(FunctionalTest):
     """
 
     def test_new_user_can_register(self):
+        # Alice has heard about this hip, new CTF challenge from the cool kids in
+        # the Cybersecurity Club, and decides to check it out.
         self.browser.get(self.get_server_url())
         self.assertEqual("Fakebook - Cybersecurity Club", self.browser.title)
 
+        # Having never visited before, she clicks the signup button
         button = self.browser.find_element_by_id("signup-button")
         self.assertEqual(button.text, "Create Account")
         button.click()
 
+        # She creates a new account by entering her username and password on the
+        # signup page, where prompted.
         username_box = self.browser.find_element_by_name("username")
         password_box = self.browser.find_element_by_name("password")
         repassword_box = self.browser.find_element_by_name("repassword")
@@ -32,14 +37,20 @@ class UserLoginTests(FunctionalTest):
         password_box.send_keys(self.password)
         repassword_box.send_keys(self.password)
 
-        self.browser.find_element_by_name("signup-submit-button").click()
+        # She clicks the "Create" button to finish the signup process
+        button = self.browser.find_element_by_name("signup-submit-button")
+        self.assertEqual(button.get_attribute("value"), "Create")
+        button.click()
 
-        # TODO: Ensure that Alice arrives at the homepage
+        # Alice arrives at her homepage. She is given a unique token for her session.
         self.assertTrue(
             f"Welcome to the Fakebook beta, {self.username}!"
             in self.browser.page_source
         )
-        self.fail("TODO")
+        cookies = self.browser.get_cookies()
+        self.assertEqual(len(cookies), 1)
+        self.assertEqual(cookies[0]["name"], "token")
+        self.assertNotEqual(cookies[0]["value"].lower(), "None")
 
     def test_same_user_cannot_register_twice(self):
         """
