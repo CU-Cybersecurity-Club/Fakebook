@@ -19,6 +19,8 @@ if os.path.exists(DOTENV_PATH):
 
 settings["SECRET_KEY"] = os.environ.get("SECRET_KEY", "secret!")
 settings["PORT"] = os.environ.get("PORT", "8000")
+settings["FLASK_ENV"] = os.environ.get("FLASK_ENV", "development")
+settings["FLASK_DEBUG"] = os.environ.get("FLASK_DEBUG", "1")
 
 settings["ACHIEVEMENTS_FILE"] = os.environ.get(
     "ACHIEVEMENTS", os.path.join("config", "achievements.json")

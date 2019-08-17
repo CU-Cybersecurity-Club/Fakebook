@@ -12,6 +12,8 @@ app = Flask(
     static_folder=settings["STATIC_FOLDER"],
     static_url_path=settings["STATIC_URL_PATH"],
 )
+app.config["DEBUG"] = settings["FLASK_DEBUG"]
+app.config["ENV"] = settings["FLASK_ENV"]
 app.config["SECRET_KEY"] = settings["SECRET_KEY"]
 
 socketio = SocketIO()
