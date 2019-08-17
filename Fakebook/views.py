@@ -80,6 +80,7 @@ app.add_url_rule("/post", "post", posts.post, methods=["POST"])
 app.add_url_rule("/login", "login", users.login, methods=["GET", "POST"])
 app.add_url_rule("/logout", "logout", users.logout, methods=["GET"])
 app.add_url_rule("/signup", "signup", users.signup, methods=["GET", "POST"])
+app.add_url_rule("/users/<path:user>", "/users/username", users.userPage)
 
 
 @app.route("/")
@@ -109,27 +110,6 @@ def search():
     query = request.args.get("q")
     results = get_search_results(query)
     return render_template("search.html", query=query, results=results)
-
-
-@app.route("/users/<path:user>")
-def userPage(user):
-    current_user = get_current_user(request)
-    if not current_user:
-        return redirect("login")
-
-    if not user_exists(user):
-        return ("404: User not found!", 404)
-
-    auth = user == current_user
-
-    return render_template(
-        "user.html",
-        name=user,
-        posts=get_posts(user),
-        picture=get_picture(user),
-        chats=chat.get_chats(),
-        auth=auth,
-    )
 
 
 @app.route("/hidden", methods=["GET"])
@@ -172,24 +152,3 @@ def server_error(error):
     current_player = request.cookies.get("player", None)
     register_achievement(current_player, "server-error")
     return render_template("error.html")
-
-
-@socketio.on("chat")
-def handle_message(json):
-    user, _, _, _ = tokens.get(json["token"], (None, None))
-    if user:
-        time = datetime.now().strftime("%b %d %I:%M %p")
-        msg = html.escape(json["msg"])
-        chat.create_chat(user, time, msg)
-        emit(
-            "post",
-            {"user": user, "msg": msg, "time": time, "picture": get_picture(user)},
-            json=True,
-            broadcast=True,
-        )
-        current_player = request.cookies.get("player", None)
-        # if current_player and user.lower() == "god":
-        #     register_achievement(current_player, 'divine-command')
-    else:
-        print("Invalid user for token: %s" % json["token"])
-        send({"token": "invalid"}, json=True)

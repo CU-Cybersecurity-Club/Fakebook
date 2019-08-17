@@ -152,3 +152,23 @@ def logout():
     resp.set_cookie("token", "None")
 
     return resp
+
+
+def userPage(user):
+    current_user = get_current_user(request)
+    if not current_user:
+        return redirect("login")
+
+    if not user_exists(user):
+        return ("404: User not found!", 404)
+
+    auth = user == current_user
+
+    return render_template(
+        "user.html",
+        name=user,
+        posts=get_posts(user),
+        picture=get_picture(user),
+        chats=chat.get_chats(),
+        auth=auth,
+    )
