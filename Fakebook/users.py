@@ -3,6 +3,7 @@ Code for account management
 """
 
 from . import achievements as achv
+from . import posts
 from .settings import settings
 from flask import request, render_template, redirect, make_response
 from hashlib import md5
@@ -176,7 +177,7 @@ def userPage(user):
     return render_template(
         "user.html",
         name=user,
-        posts=get_posts(user),
+        posts=posts.get_posts(user),
         picture=get_picture(user),
         chats=chat.get_chats(),
         auth=auth,

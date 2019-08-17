@@ -3,6 +3,8 @@ Request routing for the Fakebook app
 """
 
 from .achievements import achievements, register_achievement
+from .settings import settings
+from .posts import get_posts
 from .users import get_current_user, get_picture
 from flask import redirect, request, render_template, make_response
 from datetime import datetime, timedelta
@@ -17,22 +19,6 @@ import sqlite3
 """
 Code to help render pages
 """
-
-
-def get_posts(username):
-    query = "SELECT * FROM posts WHERE author=?"
-
-    with sqlite3.connect(settings["DATABASE"]) as db:
-        posts = db.execute(query, (username,)).fetchall()
-
-    def format_post(post):
-        _, time, content, player = post
-        return (
-            '<div class="post"><script>player="%s"</script><div class="time">%s</div>%s</div>'
-            % (player, time, content)
-        )
-
-    return "\n".join(map(format_post, posts))
 
 
 def get_search_results(search):
