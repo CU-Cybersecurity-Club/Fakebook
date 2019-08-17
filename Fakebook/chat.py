@@ -21,11 +21,8 @@ def get_chats():
 
 
 def create_chat(author, posted, content):
-    query = "INSERT INTO chats (author, posted, content) VALUES ('%s', '%s', '%s')" % (
-        author,
-        posted,
-        content,
-    )
+    query = "INSERT INTO chats (author, posted, content) VALUES (?, ?, ?)"
+    values = [author, str(posted), content]
 
     with sqlite3.connect("data.db") as db:
-        db.execute(query)
+        db.execute(query, values)
