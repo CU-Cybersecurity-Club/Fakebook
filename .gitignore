@@ -11,3 +11,6 @@ __pytest_cache__
 env
 venv
 virtualenv
+
+# Environment configurations
+.env

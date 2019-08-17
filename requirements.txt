@@ -4,3 +4,6 @@ flask-socketio
 
 # Code formatting / linting
 black
+
+# Misc
+python-dotenv
