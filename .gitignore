@@ -2,10 +2,9 @@
 *.swp
 
 # Python residuals
-*.py
 *.pyc
-__pycache__
-__pytest_cache__
+*__pycache__
+*__pytest_cache__
 
 # Virtual environments
 env
