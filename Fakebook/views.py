@@ -4,36 +4,20 @@ Request routing for the Fakebook app
 
 from .app import app, socketio
 from .achievements import achievements, register_achievement
-from .users import (
-    get_current_user,
-    verify_credentials,
-    user_exists,
-    create_user,
-    tokens,
-    players,
-)
+from .users import get_current_user, get_picture
 from flask import redirect, request, render_template, make_response
-from flask_socketio import send, emit
 from datetime import datetime, timedelta
-from . import chat
+from . import chat, users, posts, achievements
 import html
 import json
 import random
+import re
 import string
 import sqlite3
 
 """
 Code to help render pages
 """
-
-
-def generate_token(user, player=None, ip=None, size=8):
-    token = "".join(
-        random.choice(string.ascii_uppercase + string.digits) for _ in range(size)
-    )
-    tokens[token] = (user, datetime.now() + timedelta(hours=24), player, ip)
-
-    return token
 
 
 def get_posts(username):
@@ -50,15 +34,6 @@ def get_posts(username):
         )
 
     return "\n".join(map(format_post, posts))
-
-
-def get_picture(username):
-    query = "SELECT picture FROM users WHERE username=?"
-
-    with sqlite3.connect("data.db") as db:
-        picture = db.execute(query, (username,)).fetchone()
-
-    return picture[0] if picture else "default.png"
 
 
 def get_search_results(search):
@@ -80,6 +55,15 @@ def reset_page(author):
 """
 Request routing code
 """
+app.add_url_rule("/achieve", "achieve", achievements.achieve, methods=["POST"])
+app.add_url_rule("/scoreboard", "scoreboard", achievements.scoreboard, methods=["GET"])
+
+app.add_url_rule("/post", "post", posts.post, methods=["POST"])
+
+app.add_url_rule("/login", "login", users.login, methods=["GET", "POST"])
+app.add_url_rule("/logout", "logout", users.logout, methods=["GET"])
+app.add_url_rule("/signup", "signup", users.signup, methods=["GET", "POST"])
+app.add_url_rule("/users/<path:user>", "/users/username", users.userPage)
 
 
 @app.route("/")
@@ -96,92 +80,6 @@ def index():
     return redirect("login")
 
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if get_current_user(request):
-        return redirect("/")
-
-    if request.method == "GET":
-        return render_template("login.html")
-
-    user = verify_credentials(
-        request.form["username"],
-        request.form["password"],
-        player=request.cookies.get("player", None),
-    )
-    if not user:
-        return render_template("login.html", invalid_password=True)
-    else:
-        resp = make_response(redirect("/"))
-        player = request.cookies.get("player", None)
-        resp.set_cookie("token", generate_token(user, player, request.remote_addr))
-
-        return resp
-
-
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if get_current_user(request):
-        return redirect("/")
-
-    if request.method == "GET":
-        return render_template("signup.html")
-
-    if user_exists(request.form["username"]):
-        return render_template("signup.html", username_exists=request.form["username"])
-    elif request.form["password"] != request.form["repassword"]:
-        return render_template("signup.html", different_passwords=True)
-    else:
-        create_user(request.form["username"], request.form["password"])
-
-        resp = make_response(redirect("/"))
-        resp.set_cookie("token", generate_token(request.form["username"]))
-
-        return resp
-
-
-@app.route("/logout", methods=["GET"])
-def logout():
-    resp = make_response(redirect("login"))
-    resp.set_cookie("token", "None")
-
-    return resp
-
-
-@app.route("/scoreboard", methods=["GET"])
-def scoreboard():
-    def format_player(e):
-        player, achieved = e
-        score = sum([achievements[ident][0] for ident in achieved])
-        return (player, achieved, score)
-
-    def format_achievement(e):
-        ident, (score, name, desc) = e
-        return (ident, score, name, desc)
-
-    return render_template(
-        "scoreboard.html",
-        achievements=sorted(
-            map(format_achievement, achievements.items()), key=lambda x: x[1]
-        ),
-        players=sorted(map(format_player, players.items())),
-    )
-
-
-@app.route("/post", methods=["POST"])
-def post():
-    regex = '^<script>window\.location(\.href="https?:\/\/.*"|\.replace\("https?:\/\/.*"\))<\/script>?'
-    user = get_current_user(request)
-    date = datetime.now().strftime("%b %d %I:%M %p")
-    content = request.form["content"]
-    player = request.cookies["player"]
-    if re.match(regex, content):
-        register_achievement(player, "force-redirect")
-    create_post(user, date, content, player)
-
-    return redirect("/users/" + user)
-
-
 @app.route("/reset", methods=["POST"])
 def reset():
     user = get_current_user(request)
@@ -195,27 +93,6 @@ def search():
     query = request.args.get("q")
     results = get_search_results(query)
     return render_template("search.html", query=query, results=results)
-
-
-@app.route("/users/<path:user>")
-def userPage(user):
-    current_user = get_current_user(request)
-    if not current_user:
-        return redirect("login")
-
-    if not user_exists(user):
-        return ("404: User not found!", 404)
-
-    auth = user == current_user
-
-    return render_template(
-        "user.html",
-        name=user,
-        posts=get_posts(user),
-        picture=get_picture(user),
-        chats=chat.get_chats(),
-        auth=auth,
-    )
 
 
 @app.route("/hidden", methods=["GET"])
@@ -253,36 +130,8 @@ def hidden():
     )
 
 
-@app.route("/achieve", methods=["POST"])
-def achieve():
-    data = json.loads(request.data.decode("utf-8"))
-    register_achievement(data.get("player", None), data.get("id", None))
-    return ("", 204)
-
-
 @app.errorhandler(500)
 def server_error(error):
     current_player = request.cookies.get("player", None)
     register_achievement(current_player, "server-error")
     return render_template("error.html")
-
-
-@socketio.on("chat")
-def handle_message(json):
-    user, _, _, _ = tokens.get(json["token"], (None, None))
-    if user:
-        time = datetime.now().strftime("%b %d %I:%M %p")
-        msg = html.escape(json["msg"])
-        chat.create_chat(user, time, msg)
-        emit(
-            "post",
-            {"user": user, "msg": msg, "time": time, "picture": get_picture(user)},
-            json=True,
-            broadcast=True,
-        )
-        current_player = request.cookies.get("player", None)
-        # if current_player and user.lower() == "god":
-        #     register_achievement(current_player, 'divine-command')
-    else:
-        print("Invalid user for token: %s" % json["token"])
-        send({"token": "invalid"}, json=True)
