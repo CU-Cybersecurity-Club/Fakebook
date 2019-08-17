@@ -8,6 +8,8 @@ import random
 import sqlite3 as sql
 import string
 
+random.seed(0)
+
 FUNCTIONAL_TESTS_DATABASE = "test.db"
 settings["DATABASE"] = FUNCTIONAL_TESTS_DATABASE
 
@@ -52,18 +54,19 @@ class FunctionalTest(LiveServerTestCase):
         self.password = generate_random_password(32)
 
         # Reset the database
-        with sql.connect(FUNCTIONAL_TESTS_DATABASE) as db:
-            cur = db.cursor()
-            cur.execute(
-                "select 'drop table' || name || ';' from sqlite_master where type = 'table';"
-            )
-            with open(os.path.join("config", "default_database"), "r") as f:
-                for cmd in f.readlines():
-                    cur.execute(cmd)
-            db.commit()
+        self.db = sql.connect(FUNCTIONAL_TESTS_DATABASE)
+        cur = self.db.cursor()
+        cur.execute(
+            "select 'drop table' || name || ';' from sqlite_master where type = 'table';"
+        )
+        with open(os.path.join("config", "default_database"), "r") as f:
+            for cmd in f.readlines():
+                cur.execute(cmd)
+        self.db.commit()
 
     def tearDown(self):
         self.browser.quit()
+        self.db.close()
 
     """
     Helper functions for the FunctionalTest base class
