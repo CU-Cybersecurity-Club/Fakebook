@@ -2,7 +2,16 @@
 Code for account management
 """
 
+from .settings import settings
+import json
 
+# Global variables
+tokens = {}
+
+with open(settings["PLAYERS_FILE"], "r") as f:
+    players = json.loads(f.read())
+
+# Functions for users
 def get_current_user(request):
     token = request.cookies.get("token", None)
     if token in tokens:

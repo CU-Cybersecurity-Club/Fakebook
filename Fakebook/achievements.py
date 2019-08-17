@@ -2,7 +2,15 @@
 Code for player scoring, achievements, etc.
 """
 
+from .settings import settings
+from .users import players
+import json
 
+# Global variables
+with open(settings["ACHIEVEMENTS_FILE"], "r") as f:
+    achievements = json.loads(f.read())
+
+# Function definitions
 def register_achievement(player, achievement_id):
     # with open('achievements.json', 'w') as f:
     #     f.write(json.dumps(achievements))
@@ -14,5 +22,5 @@ def register_achievement(player, achievement_id):
             print("%s got the achievement: %s" % (player, achievement_id))
             players[player].append(achievement_id)
 
-    with open(PLAYERS_FILE, "w") as f:
+    with open(settings["PLAYERS_FILE"], "w") as f:
         f.write(json.dumps(players))

@@ -3,6 +3,9 @@ Request routing for the Fakebook app
 """
 
 from .app import app, socketio
+from .achievements import register_achievement
+from .users import get_current_user
+from flask import redirect, request, render_template, make_response
 
 
 @app.route("/")

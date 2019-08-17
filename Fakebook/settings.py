@@ -29,6 +29,3 @@ settings["PLAYERS_FILE"] = os.environ.setdefault(
 
 with open(settings["ACHIEVEMENTS_FILE"], "r") as f:
     achievements = json.loads(f.read())
-
-with open(settings["PLAYERS_FILE"], "r") as f:
-    players = json.loads(f.read())
