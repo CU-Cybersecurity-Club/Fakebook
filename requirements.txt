@@ -1,2 +1,6 @@
+# Web application framework
 flask
 flask-socketio
+
+# Code formatting / linting
+black
