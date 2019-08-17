@@ -1,6 +1,7 @@
 from Fakebook import create_app, settings
 from flask_testing import LiveServerTestCase
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from urllib.parse import quote
 import dotenv
 import os
@@ -50,7 +51,8 @@ class FunctionalTest(LiveServerTestCase):
 
         # Create a test username and password
         self.email_address = "alice@example.com"
-        self.username = "Alice"
+        self.name = "Alice"
+        self.username = "alic3"
         self.password = generate_random_password(32)
 
         # Reset the database
@@ -84,6 +86,15 @@ class FunctionalTest(LiveServerTestCase):
         self.browser.find_element_by_name("repassword").send_keys(self.password)
 
         self.browser.find_element_by_name("signup-submit-button").click()
+
+    def register_ctf_user(self, username):
+        """
+        Register a user for the CTF
+        """
+        self.browser.get(self.get_server_url())
+        player_box = self.browser.find_element_by_id("ctf-player")
+        player_box.send_keys(username)
+        player_box.send_keys(Keys.ENTER)
 
 
 """
