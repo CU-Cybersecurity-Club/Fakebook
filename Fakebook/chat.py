@@ -2,7 +2,7 @@
 Implements Fakebook's chat functionality
 """
 
-from .users import tokens, get_picture
+from . import users
 from .settings import settings
 from datetime import datetime
 import sqlite3
@@ -19,7 +19,7 @@ def get_chats():
 
     def format_chat(chat):
         author, time, content = chat
-        return (author, time, html.unescape(content), get_picture(author))
+        return (author, time, html.unescape(content), users.get_picture(author))
 
     return map(format_chat, chats)
 
@@ -38,14 +38,19 @@ Handlers for live chat
 
 
 def handle_message(json):
-    user, _, _, _ = tokens.get(json["token"], (None, None))
+    user, _, _, _ = users.tokens.get(json["token"], (None, None))
     if user:
         time = datetime.now().strftime("%b %d %I:%M %p")
         msg = html.escape(json["msg"])
         create_chat(user, time, msg)
         emit(
             "post",
-            {"user": user, "msg": msg, "time": time, "picture": get_picture(user)},
+            {
+                "user": user,
+                "msg": msg,
+                "time": time,
+                "picture": users.get_picture(user),
+            },
             json=True,
             broadcast=True,
         )
