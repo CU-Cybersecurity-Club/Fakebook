@@ -5,7 +5,7 @@
   <div id="chat-display">
     {% for chat in chats %}
       <div class="chat-post" id="chat-post-template">
-        <div class="chat-picture" style="background-image: url(../static/img/{{ chat[3] }})"></div>
+        <div class="chat-picture" style="background-image: url(/static/img/{{ chat[3] }})"></div>
         <div class="chat-user">{{ chat[0] }}</div><div class="chat-time">{{ chat[1] }}</div>
         <br/>
         <div class="chat-msg">{{ chat[2] }}</div>

@@ -27,5 +27,7 @@ settings["PLAYERS_FILE"] = os.environ.setdefault(
     "PLAYERS", os.path.join("config", "players.json")
 )
 
-# Directory in which Flask can find the templates
+# Directory in which Flask can find templates and static files
 settings["TEMPLATE_FOLDER"] = os.path.join(BASE_DIR, "templates")
+settings["STATIC_FOLDER"] = os.path.join(BASE_DIR, "static")
+settings["STATIC_URL_PATH"] = "/static"
