@@ -65,8 +65,9 @@ class FunctionalTest(LiveServerTestCase):
             "select 'drop table' || name || ';' from sqlite_master where type = 'table';"
         )
         with open(os.path.join("config", "default_database"), "r") as f:
-            for cmd in f.readlines():
-                cur.execute(cmd)
+            cmd = f.read().split(";")
+            for c in cmd:
+                cur.execute(c)
         self.db.commit()
 
         # Create a players.json and an achievements.json for this test
