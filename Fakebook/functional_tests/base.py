@@ -8,6 +8,8 @@ import random
 import sqlite3 as sql
 import string
 
+random.seed(0)
+
 FUNCTIONAL_TESTS_DATABASE = "test.db"
 settings["DATABASE"] = FUNCTIONAL_TESTS_DATABASE
 
