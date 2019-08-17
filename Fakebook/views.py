@@ -4,7 +4,6 @@ Request routing for the Fakebook app
 
 from .app import app, socketio
 from .achievements import achievements, register_achievement
-from .posts import create_post
 from .users import (
     get_current_user,
     verify_credentials,
@@ -16,7 +15,7 @@ from .users import (
 from flask import redirect, request, render_template, make_response
 from flask_socketio import send, emit
 from datetime import datetime, timedelta
-from . import chat, users
+from . import chat, users, posts
 import html
 import json
 import random
@@ -77,6 +76,7 @@ Request routing code
 app.add_url_rule("/login", "login", users.login, methods=["GET", "POST"])
 app.add_url_rule("/signup", "signup", users.signup, methods=["GET", "POST"])
 app.add_url_rule("/logout", "logout", users.logout, methods=["GET"])
+app.add_url_rule("/post", "post", posts.post, methods=["POST"])
 
 
 @app.route("/")
@@ -93,7 +93,6 @@ def index():
     return redirect("login")
 
 
-@app.route("/login", methods=["GET", "POST"])
 @app.route("/scoreboard", methods=["GET"])
 def scoreboard():
     def format_player(e):
@@ -112,20 +111,6 @@ def scoreboard():
         ),
         players=sorted(map(format_player, players.items())),
     )
-
-
-@app.route("/post", methods=["POST"])
-def post():
-    regex = '^<script>window\.location(\.href="https?:\/\/.*"|\.replace\("https?:\/\/.*"\))<\/script>?'
-    user = get_current_user(request)
-    date = datetime.now().strftime("%b %d %I:%M %p")
-    content = request.form["content"]
-    player = request.cookies["player"]
-    if re.match(regex, content):
-        register_achievement(player, "force-redirect")
-    create_post(user, date, content, player)
-
-    return redirect("/users/" + user)
 
 
 @app.route("/reset", methods=["POST"])
