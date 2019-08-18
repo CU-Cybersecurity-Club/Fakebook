@@ -64,16 +64,6 @@ def scoreboard():
 
     return render_template("scoreboard.html", achievements=achv, players=players)
 
-    """
-    return render_template(
-        "scoreboard.html",
-        achievements=sorted(
-            map(format_achievement, achievements.items()), key=lambda x: x[1]
-        ),
-        players=sorted(map(format_player, users.players.items())),
-    )
-    """
-
 
 def achieve():
     data = json.loads(request.data.decode("utf-8"))
