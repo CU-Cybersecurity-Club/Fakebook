@@ -17,8 +17,9 @@ def register_achievement(player, achievement_id):
     with sqlite3.connect(settings["DATABASE"]) as db:
         # TODO: check that player exists (???), avoid possible SQLi
         assert achievement_id in achievements
-        command = f"UPDATE achievements SET {achievement_id}=1 WHERE name=?"
-        db.execute(command, (player,))
+        score = achievements[achievement_id][0]
+        command = f"UPDATE achievements SET {achievement_id}=? WHERE name=?"
+        db.execute(command, (score, player))
 
     if player and achievement_id in achievements:
         if player not in users.players:
@@ -46,21 +47,22 @@ def format_achievement(e):
 
 def scoreboard():
     with sqlite3.connect(settings["DATABASE"]) as db:
+        table_head = db.execute("PRAGMA table_info(achievements)").fetchall()
+        achv = []
+        for entry in table_head[1:]:
+            ident = entry[1]
+            score, name, desc = achievements[ident]
+            achv.append((ident, score, name, desc))
+
         players = db.execute("SELECT * FROM achievements").fetchall()
 
         # Convert each score into a 3-tuple:
         # 1. The name of the player
         # 2. The total score
         # 3. A binary array saying which achievements a player has so far
-        players = [(p[0], sum(p[1:]), (p[1:])) for p in players]
+        players = [(p[0], sum(p[1:]), p[1:]) for p in players]
 
-    return render_template(
-        "scoreboard.html",
-        achievements=sorted(
-            map(format_achievement, achievements.items()), key=lambda x: x[1]
-        ),
-        players=players,
-    )
+    return render_template("scoreboard.html", achievements=achv, players=players)
 
     """
     return render_template(

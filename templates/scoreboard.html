@@ -30,7 +30,7 @@
                 <td>{{ score }}</td>
                 {% for is_achieved in achieved %}
                 <td>
-                	{% if is_achieved == 1 %}&#10004;{% endif %}
+                	{% if is_achieved > 0 %}&#10004;{% endif %}
                 </td>
                 {% endfor %}
               </tr>

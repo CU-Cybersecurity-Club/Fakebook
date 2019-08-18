@@ -5,9 +5,10 @@ DROP TABLE IF EXISTS achievements;
 CREATE TABLE IF NOT EXISTS users (username TEXT, password_hash TEXT, email TEXT, picture TEXT);
 CREATE TABLE IF NOT EXISTS posts (author TEXT, posted TEXT, content TEXT, player TEXT);
 CREATE TABLE IF NOT EXISTS chats (author TEXT, posted TEXT, content TEXT);
-CREATE TABLE IF NOT EXISTS achievements (name TEXT, stolen_token INTEGER, password_mel INTEGER,
-	alert INTEGER, created_account INTEGER, server_error INTEGER,
-	find_comment INTEGER, force_redirect INTEGER, unlisted_path INTEGER);
+CREATE TABLE IF NOT EXISTS achievements (name TEXT, created_account INTEGER, find_comment INTEGER,
+	unlisted_path INTEGER, alert INTEGER,
+	force_redirect INTEGER, server_error INTEGER, stolen_token INTEGER,
+	password_mel INTEGER);
 INSERT INTO users (username, password_hash, email, picture) VALUES ('CATl0v3r', 'dfd78600666df07dae51e3baa77910a8', 'catlover@fakemail.com', 'catl0v3r.jpg');
 INSERT INTO users (username, password_hash, email, picture) VALUES ('Mel', '827ccb0eea8a706c4c34a16891f84e7b', 'mel1996@fakemail.com', 'mel.jpg');
 INSERT INTO users (username, password_hash, email, picture) VALUES ('Admin', '30541fdea0a3e7311c692974ec772a7b', 'admin@fakebook.com', 'admin.jpg');
