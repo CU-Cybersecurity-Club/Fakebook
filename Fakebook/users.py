@@ -30,7 +30,7 @@ def get_current_user(request):
             if current_player and current_player != origin_player:
                 print(current_player)
                 print(origin_player)
-                achv.register_achievement(current_player, "stolen-token")
+                achv.register_achievement(current_player, "stolen_token")
             return name
     return None
 
@@ -64,7 +64,7 @@ def verify_credentials(username, password, player=None):
             for q in query.split(";"):
                 user = db.execute(q, (username, pass_hash)).fetchone()
         except Exception as e:
-            achv.register_achievement(player, "sql-error")
+            achv.register_achievement(player, "sql_error")
             raise Exception("Error with query: %s (%s)" % (query, e))
 
     # Achievements
@@ -91,14 +91,21 @@ def verify_credentials(username, password, player=None):
     return user[0] if user else None
 
 
-def create_user(username, password):
+def create_user(username, password, player):
     assert not user_exists(username)
 
     pass_hash = md5(password.encode("utf-8")).hexdigest()
-    query = "INSERT INTO users (username, password_hash, picture) VALUES (?, ?, 'default.png')"
 
     with sqlite3.connect(settings["DATABASE"]) as db:
+        query = "INSERT INTO users (username, password_hash, picture) VALUES (?, ?, 'default.png')"
         user = db.execute(query, (username, pass_hash))
+
+        # Set all of the users' achievements to 0
+        cols = db.execute("PRAGMA table_info(achievements)").fetchall()
+        fields = f"({','.join(c[1] for c in cols)})"
+        values = f"(?, {','.join('0' for _ in range(len(cols)-1))})"
+        query = f"INSERT INTO achievements {fields} VALUES {values}"
+        db.execute(query, (player,))
 
 
 def generate_token(user, player=None, ip=None, size=8):
@@ -149,7 +156,8 @@ def signup():
     elif request.form["password"] != request.form["repassword"]:
         return render_template("signup.html", different_passwords=True)
     else:
-        create_user(request.form["username"], request.form["password"])
+        player = request.cookies.get("player")
+        create_user(request.form["username"], request.form["password"], player)
 
         resp = make_response(redirect("/"))
         resp.set_cookie("token", generate_token(request.form["username"]))

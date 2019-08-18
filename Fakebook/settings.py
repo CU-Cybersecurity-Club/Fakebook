@@ -33,8 +33,8 @@ settings["DATABASE"] = os.environ.get("DATABASE", "data.db")
 
 # Application settings
 settings["ACHIEVEMENTS_FILE"] = os.environ.get(
-    "ACHIEVEMENTS", os.path.join("config", "achievements.json")
+    "ACHIEVEMENTS_FILE", os.path.join("config", "achievements.json")
 )
 settings["PLAYERS_FILE"] = os.environ.get(
-    "PLAYERS", os.path.join("config", "players.json")
+    "PLAYERS_FILE", os.path.join("config", "players.json")
 )

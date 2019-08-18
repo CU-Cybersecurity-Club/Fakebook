@@ -110,7 +110,7 @@ def hidden():
     query = "SELECT * FROM users"
 
     current_player = request.cookies.get("player", None)
-    register_achievement(current_player, "unlisted-path")
+    register_achievement(current_player, "unlisted_path")
 
     with sqlite3.connect(settings["DATABASE"]) as db:
         data = db.execute(query).fetchall()
@@ -147,5 +147,5 @@ Error handlers
 
 def server_error_500(error):
     current_player = request.cookies.get("player", None)
-    register_achievement(current_player, "server-error")
+    register_achievement(current_player, "server_error")
     return render_template("error.html")

@@ -1,10 +1,10 @@
 {
-  "stolen-token": [ 11, "Stolen token", "Steal a session token from another user. (Hint - reading it over the network might be required)" ],
-  "password-mel": [ 7, "Password: Mel", "Log in with Mel's password." ],
+  "stolen_token": [ 11, "Stolen token", "Steal a session token from another user. (Hint - reading it over the network might be required)" ],
+  "password_mel": [ 7, "Password: Mel", "Log in with Mel's password." ],
   "alert": [ 5, "XSS alert", "Use XSS to insert an alert." ],
-  "created-account": [ 1, "Create account", "Create your account!" ],
-  "server-error": [ 2, "Break server", "Cause an internal server error." ],
-  "find-comment": [ 4, "Find login", "Find a login hidden in the html files. (Hint - inspect element is your friend)" ],
-  "force-redirect": [ 6, "Redirect page", "Use XSS to redirect the page to another of your choice" ],
-  "unlisted-path":  [12,"Find hidden path","Find a hidden url path (Hint - a url path is the extension to the address. ex: www.abc.com/path versus www.abc.com/differentpath"]
+  "created_account": [ 1, "Create account", "Create your account!" ],
+  "server_error": [ 2, "Break server", "Cause an internal server error." ],
+  "find_comment": [ 4, "Find login", "Find a login hidden in the html files. (Hint - inspect element is your friend)" ],
+  "force_redirect": [ 6, "Redirect page", "Use XSS to redirect the page to another of your choice" ],
+  "unlisted_path":  [12,"Find hidden path","Find a hidden url path (Hint - a url path is the extension to the address. ex: www.abc.com/path versus www.abc.com/differentpath"]
 }

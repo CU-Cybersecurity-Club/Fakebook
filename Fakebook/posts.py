@@ -47,7 +47,7 @@ def post():
     content = request.form["content"]
     player = request.cookies["player"]
     if re.match(regex, content):
-        register_achievement(player, "force-redirect")
+        register_achievement(player, "force_redirect")
     create_post(user, date, content, player)
 
     return redirect("/users/" + user)

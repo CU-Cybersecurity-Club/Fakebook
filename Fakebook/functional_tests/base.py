@@ -1,6 +1,7 @@
 from Fakebook import create_app, settings
 from flask_testing import LiveServerTestCase
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from urllib.parse import quote
 import dotenv
 import os
@@ -11,7 +12,10 @@ import string
 random.seed(0)
 
 FUNCTIONAL_TESTS_DATABASE = "test.db"
+FUNCTIONAL_TESTS_PLAYERS = os.path.join("config", "test.players.json")
+
 settings["DATABASE"] = FUNCTIONAL_TESTS_DATABASE
+settings["PLAYERS_FILE"] = FUNCTIONAL_TESTS_PLAYERS
 
 """
 Base class for functional tests
@@ -50,19 +54,25 @@ class FunctionalTest(LiveServerTestCase):
 
         # Create a test username and password
         self.email_address = "alice@example.com"
-        self.username = "Alice"
+        self.name = "Alice"
+        self.username = "alic3"
         self.password = generate_random_password(32)
 
         # Reset the database
-        self.db = sql.connect(FUNCTIONAL_TESTS_DATABASE)
+        self.db = sql.connect(settings["DATABASE"])
         cur = self.db.cursor()
         cur.execute(
             "select 'drop table' || name || ';' from sqlite_master where type = 'table';"
         )
         with open(os.path.join("config", "default_database"), "r") as f:
-            for cmd in f.readlines():
-                cur.execute(cmd)
+            cmd = f.read().split(";")
+            for c in cmd:
+                cur.execute(c)
         self.db.commit()
+
+        # Create a players.json and an achievements.json for this test
+        with open(settings["PLAYERS_FILE"], "w") as f:
+            f.write("{}")
 
     def tearDown(self):
         self.browser.quit()
@@ -84,6 +94,15 @@ class FunctionalTest(LiveServerTestCase):
         self.browser.find_element_by_name("repassword").send_keys(self.password)
 
         self.browser.find_element_by_name("signup-submit-button").click()
+
+    def register_ctf_user(self, username):
+        """
+        Register a user for the CTF
+        """
+        self.browser.get(self.get_server_url())
+        player_box = self.browser.find_element_by_id("ctf-player")
+        player_box.send_keys(username)
+        player_box.send_keys(Keys.ENTER)
 
 
 """
