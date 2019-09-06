@@ -4,6 +4,7 @@ Set application configurations
 
 from flask import Flask
 
+import dotenv
 import json
 import os
 
