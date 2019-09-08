@@ -23,6 +23,7 @@ Clone and run
 su - fakebook
 git clone https://github.com/CU-Cybersecurity-Club/Fakebook.git
 cd Fakebook/
+pip3 install --user -r requirements.txt
 ./reset_db.sh
 tmux
 python3 app.py
