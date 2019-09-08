@@ -8,7 +8,7 @@ ENV fakebook_home="/home/$flask_user/Fakebook"
 # Install required packages
 RUN apt-get update -qq -y && \
 	apt-get install -qq -y apt-utils
-RUN apt-get install -qq -y git python3 python3-pip sudo
+RUN apt-get install -qq -y git python3 python3-pip sudo ssh sqlite3
 
 ### Install webapp in container
 # 1. Add user
@@ -21,13 +21,20 @@ RUN mkdir -p $fakebook_home
 RUN git clone --depth 1 $repo $fakebook_home
 
 # 3. Install dependencies
-RUN pip3 install -r $fakebook_home/requirements.txt --user
+USER root
+RUN pip3 install -r $fakebook_home/requirements.txt
+USER flask
 
 # 4. Add a .env for the container
 RUN touch $fakebook_home/.env
 RUN echo "SECRET_KEY=$(head -c 40 /dev/urandom | base32 -w0)" >> $fakebook_home/.env
 RUN echo "PORT=8000" >> $fakebook_home/.env
 RUN echo "FLASK_DEBUG=true" >> $fakebook_home/.env
+
+# 5. Reset the database
+RUN cd $fakebook_home && \
+	chmod +x reset_db.sh && \
+	./reset_db.sh
 
 # Expose ports for http and ssh
 EXPOSE 22 8000
