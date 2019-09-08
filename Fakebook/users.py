@@ -27,7 +27,7 @@ def get_current_user(request):
         if exp > datetime.now():
             # Achievement
             current_player = request.cookies.get("player", None)
-            if current_player and current_player != origin_player:
+            if origin_player is not None and current_player is not None and current_player != origin_player:
                 print(current_player)
                 print(origin_player)
                 achv.register_achievement(current_player, "stolen_token")
