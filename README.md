@@ -3,6 +3,45 @@ It's a CTF!
 
 web app with XSS vulnerabilities
 
+## Running and Nginx
+On your standard Ubuntu 18.04 (minimal):
+```
+adduser fakebook
+apt install python3-pip tmux sqlite3 nginx
+```
+
+Now configure nginx to forward the port (see further down for config)
+```
+rm /etc/nginx/sites-enabled/default 
+vim /etc/nginx/sites-available/fakebook
+ln -s /etc/nginx/sites-available/fakebook /etc/nginx/sites-enabled/
+systemctl restart nginx
+```
+
+Clone and run
+```
+su - fakebook
+git clone https://github.com/CU-Cybersecurity-Club/Fakebook.git
+cd Fakebook/
+./reset_db.sh
+tmux
+python3 app.py
+```
+Detach from tmux. You're done.
+
+The nginx site config to simply forward 80 to 8000:
+```
+server {
+        listen 80;
+        server_name fakebook.cucybersecurityclub.com;
+        location / {
+                proxy_set_header        X-Forwarded-For $remote_addr;
+                proxy_set_header        Host $http_host;
+                proxy_pass              "http://127.0.0.1:8000";
+        }
+}
+```
+
 ## Testing
 This repository contains some tests to ensure that the Fakebook app works correctly. To run these tests, simply run `pytest` from the root directory for the repo after downloading it and installing its dependencies.
 
