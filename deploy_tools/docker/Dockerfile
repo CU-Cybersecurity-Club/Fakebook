@@ -9,6 +9,7 @@ ENV fakebook_home="/home/$flask_user/Fakebook"
 RUN apt-get update -qq -y && \
 	apt-get install -qq -y apt-utils
 RUN apt-get install -qq -y git python3 python3-pip sudo
+RUN apt-get install -qq -y ssh
 
 ### Install webapp in container
 # 1. Add user
@@ -21,7 +22,9 @@ RUN mkdir -p $fakebook_home
 RUN git clone --depth 1 $repo $fakebook_home
 
 # 3. Install dependencies
-RUN pip3 install -r $fakebook_home/requirements.txt --user
+USER root
+RUN pip3 install -r $fakebook_home/requirements.txt
+USER flask
 
 # 4. Add a .env for the container
 RUN touch $fakebook_home/.env

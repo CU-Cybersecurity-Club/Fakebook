@@ -1,5 +1,7 @@
 #!/bin/bash
-# Script to run everything required for the lab
-service ssh start
 
-cd "$fakebook_home" && sudo $flask_user python3 app.py &
+service ssh start
+sudo -u $flask_user -s -- <<EOF
+cd $fakebook_home
+python3 app.py &
+EOF
