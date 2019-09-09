@@ -1,0 +1,13 @@
+all:
+  children:
+    webserver:
+      vars:
+        repo: "https://github.com/CU-Cybersecurity-Club/Fakebook"
+        host: "{{ inventory_hostname }}"
+        ansible_ssh_user: flask
+        site_directory: "/home/{{ ansible_ssh_user }}/{{ host }}"
+      children:
+        vars:
+          debug: true
+        hosts:
+          fakebook.cucybersecurityclub.com:
