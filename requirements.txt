@@ -12,3 +12,4 @@ pytest
 
 # Misc
 python-dotenv
+ansible
