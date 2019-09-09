@@ -1,1 +1,3 @@
-sqlite3 data.db < config/default_database
+#!/bin/bash
+BASE_DIR=$(dirname "$0")
+sqlite3 "$BASE_DIR/data.db" < "$BASE_DIR/config/default_database"
