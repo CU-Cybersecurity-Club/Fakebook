@@ -1,0 +1,20 @@
+---
+- name: set password for staging server
+  hosts: staging
+  remote_user: "{{ ansible_ssh_user }}"
+  become: yes
+
+  vars_prompt:
+  - name: staging_server_password
+    private: yes
+    prompt: "Set staging server password"
+    encrypt: "sha512_crypt"
+    confirm: yes
+    salt_size: 7
+
+  tasks:
+  - name: install .htpasswd for restricting access to staging servers
+    template:
+      src: config/nginx/htpasswd.j2
+      dest: /etc/nginx/.htpasswd
+...
