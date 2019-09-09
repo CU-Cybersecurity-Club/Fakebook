@@ -6,5 +6,10 @@ all:
     site_directory: "/home/{{ ansible_ssh_user }}/{{ host }}"
     branch: master
     debug: true
-  hosts:
-    fakebook.cucybersecurityclub.com:
+  children:
+    production:
+      hosts:
+        fakebook.cucybersecurityclub.com:
+    staging:
+      hosts:
+        staging.fakebook.cucybersecurityclub.com:
