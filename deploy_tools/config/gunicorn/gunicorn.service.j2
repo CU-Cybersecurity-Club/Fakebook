@@ -8,7 +8,7 @@ WorkingDirectory=/home/{{ ansible_ssh_user }}/{{ host }}
 ExecStart={{ site_directory }}/virtualenv/bin/gunicorn \
   --name {{ host }} \
   --pythonpath /home/{{ ansible_ssh_user }}/{{ host }} \
-  --bind unix:/home/{{ ansible_ssh_user }}/gunicorn-{{ host }}.socket \
+  --bind unix:/tmp/gunicorn-{{ host }}.socket \
   --log-file /home/{{ ansible_ssh_user }}/gunicorn-{{ host }}.log \
   --config /etc/gunicorn.d/gunicorn.py app
 Restart=always
