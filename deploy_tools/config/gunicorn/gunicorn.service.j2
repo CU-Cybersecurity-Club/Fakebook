@@ -5,7 +5,8 @@ After=network.target
 
 [Service]
 WorkingDirectory=/var/www/{{ host }}
-ExecStart={{ site_directory }}/virtualenv/bin/gunicorn \
+ExecStartPre=/var/www/{{ host }}/reset_db.sh
+ExecStart=/var/www/{{ host }}/virtualenv/bin/gunicorn \
   --name {{ host }} \
   --pythonpath /var/www/{{ host }} \
   --bind unix:/tmp/gunicorn-{{ host }}.socket \
