@@ -10,7 +10,7 @@
   - name: install packages
     apt:
       force: yes
-      pkg: fail2ban,unattended-upgrades,logwatch
+      pkg: fail2ban,unattended-upgrades,logwatch,iptables-persistent
     notify:
       - restart fail2ban
 
@@ -54,6 +54,14 @@
     notify:
       - restart fail2ban
 
+  # firewall
+  - name: set up iptables firewall (IPv4)
+    template:
+      src: ./config/firewall.j2
+      dest: /etc/iptables/rules.v4
+    notify:
+      - restart iptables
+
   handlers:
   - name: restart fail2ban
     service:
@@ -64,4 +72,7 @@
     service:
       name: unattended-upgrades
       state: restarted
+
+  - name: restart iptables
+    command: iptables-restore < /etc/iptables/rules.v4
 ...
