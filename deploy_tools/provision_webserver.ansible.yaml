@@ -34,6 +34,13 @@
     notify:
       - restart nginx
 
+  - name: add user www-data to run the nginx server
+    become: yes
+    user:
+      name: www-data
+      shell: /usr/sbin/nologin
+      append: yes
+
   # Configure gunicorn
   - name: install gunicorn service
     become: yes
