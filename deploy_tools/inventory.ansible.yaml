@@ -1,0 +1,10 @@
+all:
+  vars:
+    repo: "https://github.com/CU-Cybersecurity-Club/Fakebook.git"
+    host: "{{ inventory_hostname }}"
+    ansible_ssh_user: flask
+    site_directory: "/home/{{ ansible_ssh_user }}/{{ host }}"
+    branch: master
+    debug: true
+  hosts:
+    fakebook.cucybersecurityclub.com:

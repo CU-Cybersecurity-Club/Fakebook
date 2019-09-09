@@ -1,0 +1,79 @@
+---
+- name: generic server provisioning for security
+  hosts: all
+  become: yes
+  remote_user: "{{ ansible_ssh_user }}"
+
+  tasks:
+
+  # package downloads
+  - name: install packages
+    apt:
+      force: yes
+      pkg: fail2ban,unattended-upgrades,logwatch,iptables-persistent
+    notify:
+      - restart fail2ban
+
+  # ssh configuration
+  - name: disable password authentication for ssh
+    lineinfile:
+      dest: /etc/ssh/sshd_config
+      backrefs: yes
+      regexp: 'PasswordAuthentication(\s*)yes'
+      line: 'PasswordAuthentication no'
+
+  # logwatch configuration
+  - name: enable sending logs to domain admin
+    become: yes
+    lineinfile:
+      dest: /etc/cron.daily/00logwatch
+      backrefs: yes
+      regexp: "^/usr/sbin/logwatch .*$"
+      line: "/usr/sbin/logwatch --output /var/log/logwatch.log --detail high"
+
+  # unattended-upgrades configuration
+  - name: configure instance to update automatically
+    template:
+      src: ./config/apt.10periodic.j2
+      dest: /etc/apt/apt.conf.d/10periodic
+    notify:
+      - restart unattended-upgrades
+
+  - name: install security updates automatically with unattended-upgrades
+    template:
+      src: ./config/apt.50unattended-upgrades.j2
+      dest: /etc/apt/apt.conf.d/50unattended-upgrades
+    notify:
+      - restart unattended-upgrades
+
+  # fail2ban configuration
+  - name: configure Fail2Ban for ssh
+    template:
+      src: ./config/fail2ban.sshd.local.j2
+      dest: /etc/fail2ban/jail.d/sshd.local
+    notify:
+      - restart fail2ban
+
+  # firewall
+  - name: set up iptables firewall (IPv4)
+    template:
+      src: ./config/firewall.j2
+      dest: /etc/iptables/rules.v4
+    notify:
+      - restart iptables
+
+  handlers:
+  - name: restart fail2ban
+    service:
+      name: fail2ban
+      state: restarted
+
+  - name: restart unattended-upgrades
+    service:
+      name: unattended-upgrades
+      state: restarted
+
+  - name: restart iptables
+    become: yes
+    command: "iptables-restore < /etc/iptables/rules.v4"
+...

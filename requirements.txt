@@ -2,6 +2,7 @@
 flask
 flask-socketio
 flask-testing
+gunicorn
 
 # Code formatting / linting
 black
@@ -12,3 +13,5 @@ pytest
 
 # Misc
 python-dotenv
+ansible
+gevent

@@ -11,3 +11,5 @@ import re
 
 from .app import create_app
 from .settings import settings
+
+application, sio = create_app("Fakebook")
