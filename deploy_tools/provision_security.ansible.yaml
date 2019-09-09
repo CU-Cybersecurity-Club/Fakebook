@@ -74,5 +74,6 @@
       state: restarted
 
   - name: restart iptables
+    become: yes
     command: "iptables-restore < /etc/iptables/rules.v4"
 ...

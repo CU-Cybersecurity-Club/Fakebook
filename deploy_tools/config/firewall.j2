@@ -9,9 +9,13 @@
 -A INPUT -i lo -j ACCEPT
 -A OUTPUT -o lo -j ACCEPT
 
-# Accept all connections to ssh
+# Accept all connections to ssh, http, and https
 -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
 -A OUTPUT -p tcp -m tcp --sport 22 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --sport 80 -j ACCEPT
+-A OUTPUT -p tcp -m tcp --sport 443 -j ACCEPT
 
 # Block attempts by others to establish connections to the machine
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
