@@ -1,13 +1,13 @@
 ---
 - name: web server provisioning playbook
-  hosts: webserver
+  hosts: all
   remote_user: "{{ ansible_ssh_user }}"
 
   tasks:
   - name: install packages
     apt:
       force: yes
-      pkg: nginx,git,python3,python3-venv,software-properties-common
+      pkg: nginx,git,python3,python-pip,python3-pip,python3-setuptools,software-properties-common
     become: yes
 
   # nginx configuration
@@ -28,8 +28,8 @@
   - name: add symlink to nginx sites-enabled
     become: yes
     file:
-      src: /etc/nginx/sites-available/{{ host }}
-      dest: /etc/nginx/sites-enabled/{{ host }}
+      src: "/etc/nginx/sites-available/{{ host }}"
+      dest: "/etc/nginx/sites-enabled/{{ host }}"
       state: link
     notify:
       - restart nginx
@@ -39,15 +39,25 @@
     become: yes
     template:
       src: ./config/gunicorn.service.j2
-      dest: /etc/systemd/system/gunicorn-{{ host }}.service
+      dest: "/etc/systemd/system/gunicorn-{{ host }}.service"
     notify:
       - restart gunicorn
 
   - name: make gunicorn start on boot
     become: yes
     service:
-      name: gunicorn-{{ host }}
+      name: "gunicorn-{{ host }}"
       enabled: yes
+
+  - name: add /etc/gunicorn.d
+    become: yes
+    command: "mkdir -p /etc/gunicorn.d"
+  
+  - name: add gunicorn configuration
+    become: yes
+    template:
+      src: ./config/gunicorn.py.j2
+      dest: /etc/gunicorn.d/gunicorn.py
 
   # Update code and configuration from repository
   - name: download code from repository
@@ -56,13 +66,17 @@
       dest: "{{ site_directory }}"
       version: "{{ branch | default('HEAD') }}"
       force: yes
-      key_file: /home/{{ ansible_ssh_user }}/.ssh/deploy_keys
+
+  - name: install virtualenv via pip
+    pip:
+      name: virtualenv
+      executable: pip3
 
   - name: update Python virtual environment
-    become_user: {{ ansible_ssh_user }}
+    become_user: "{{ ansible_ssh_user }}"
     pip:
       virtualenv: "{{ site_directory }}/virtualenv"
-      virtualenv_python: python3.6
+      virtualenv_command: /usr/bin/python3.6 -m venv
       requirements: "{{ site_directory }}/requirements.txt"
 
   - name: add .env config file
@@ -95,7 +109,7 @@
   - name: restart gunicorn
     become: yes
     systemd:
-      name: gunicorn-{{ host }}
+      name: "gunicorn-{{ host }}"
       daemon_reload: yes
       enabled: yes
       state: restarted

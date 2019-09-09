@@ -4,13 +4,6 @@ upstream {{ host }}_server {
     server unix:/home/{{ ansible_ssh_user }}/gunicorn-{{ host }}.socket fail_timeout=0;
 }
 
-# Reroute port 80 to port 443
-server {
-    listen 80 default_server;
-    server_name _;
-    return 301 https://$host$request_uri;
-}
-
 server {
     listen 443 ssl;
 
