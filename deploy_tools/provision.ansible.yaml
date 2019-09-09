@@ -11,15 +11,32 @@
     become: yes
 
   ###
+  ### USERS
+  ###
+  - name: add user www-data
+    become: yes
+    user:
+      name: www-data
+      shell: /usr/sbin/nologin
+      append: yes
+
+  - name: give correct permissions to Ansible user
+    become: yes
+    user:
+      name: flask
+      groups: flask,www-data
+
+  ###
   ### GENERIC SECURITY PROVISIONING
   ###
   # ssh configuration
-  - name: disable password authentication for ssh
-    lineinfile:
+  - name: update SSH config
+    become: yes
+    template:
+      src: ./config/misc/sshd_config.j2
       dest: /etc/ssh/sshd_config
-      backrefs: yes
-      regexp: 'PasswordAuthentication(\s*)yes'
-      line: 'PasswordAuthentication no'
+    notify:
+      - restart ssh
 
   # logwatch configuration
   - name: enable sending logs to domain admin
@@ -64,6 +81,14 @@
   ###
   ### WEBSERVER PROVISIONING
   ###
+  - name: give permissions for /var/www to www-data
+    become: yes
+    file:
+      path: /var/www
+      owner: www-data
+      group: www-data
+      mode: '0775'
+
   # nginx configuration
   - name: add nginx.conf to /etc/nginx
     become: yes
@@ -75,7 +100,7 @@
     become: yes
     template:
       src: ./config/nginx/webserver.nginx.j2
-      dest: /etc/nginx/sites-available/{{ host }}
+      dest: "/etc/nginx/sites-available/{{ host }}"
     notify:
       - restart nginx
 
@@ -104,13 +129,6 @@
       state: link
     notify:
       - restart nginx
-
-  - name: add user www-data to run the nginx server
-    become: yes
-    user:
-      name: www-data
-      shell: /usr/sbin/nologin
-      append: yes
 
   # Configure gunicorn
   - name: install gunicorn service
@@ -141,28 +159,35 @@
 
   # Update code and configuration from repository
   - name: download code from repository
+    become: yes
+    become_user: www-data
     git:
       repo: "{{ repo }}"
-      dest: "{{ site_directory }}"
+      dest: "/var/www/{{ host }}"
       version: "{{ branch | default('HEAD') }}"
+      depth: 1
       force: yes
 
   - name: install virtualenv via pip
+    become: yes
     pip:
       name: virtualenv
       executable: pip3
 
   - name: update Python virtual environment
-    become_user: "{{ ansible_ssh_user }}"
+    become: yes
+    become_user: www-data
     pip:
-      virtualenv: "{{ site_directory }}/virtualenv"
+      virtualenv: "/var/www/{{ host }}/virtualenv"
       virtualenv_command: /usr/bin/python3.6 -m venv
-      requirements: "{{ site_directory }}/requirements.txt"
+      requirements: "/var/www/{{ host }}/requirements.txt"
 
   - name: add .env config file
+    become: yes
+    become_user: www-data
     template:
       src: ./config/gunicorn/webserver.env.j2
-      dest: "{{ site_directory }}/.env"
+      dest: "/var/www/{{ host }}/.env"
     notify:
       - restart gunicorn
 
@@ -191,6 +216,11 @@
   - name: restart unattended-upgrades
     service:
       name: unattended-upgrades
+      state: restarted
+
+  - name: restart ssh
+    service:
+      name: ssh
       state: restarted
 
   - name: restart iptables
