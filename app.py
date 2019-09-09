@@ -1,6 +1,4 @@
-from Fakebook import create_app, settings
-
-app, sio = create_app(__name__)
+from Fakebook import application, sio
 
 # achievements = {
 #     'created-account': (1, 'Create account', 'Create your account!'),
@@ -26,4 +24,5 @@ app, sio = create_app(__name__)
 
 
 if __name__ == "__main__":
-    sio.run(app, host="0.0.0.0", port=settings["PORT"])
+    # application.run(app, host="0.0.0.0", port=settings["PORT"])
+    sio.run(application)
