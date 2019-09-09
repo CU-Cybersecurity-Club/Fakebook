@@ -45,9 +45,6 @@ server {
     client_max_body_size 4G;
     server_name {{ host }};
 
-    ssl_certificate /etc/letsencrypt/live/{{ host }}/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/{{ host }}/privkey.pem; # managed by Certbox
-
     keepalive_timeout 70;
 
     # Location of media files
