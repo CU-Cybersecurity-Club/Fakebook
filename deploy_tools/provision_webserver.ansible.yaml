@@ -58,7 +58,9 @@
 
   - name: add /etc/gunicorn.d
     become: yes
-    command: "mkdir -p /etc/gunicorn.d"
+    file:
+      path: /etc/gunicorn.d
+      state: directory
   
   - name: add gunicorn configuration
     become: yes
