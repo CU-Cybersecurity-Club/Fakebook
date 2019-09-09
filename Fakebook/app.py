@@ -4,6 +4,7 @@ Code for creating the primary Flask app used by Fakebook
 
 from .views import add_routes, add_socketio_handlers
 from .settings import settings
+from .chat import handle_message
 from flask import Flask
 from flask_socketio import SocketIO
 
@@ -21,6 +22,7 @@ def create_app(name):
 
     socketio = SocketIO()
     socketio.init_app(app)
+    socketio.on_event("chat", handle_message)
 
     app = add_routes(app)
     socketio = add_socketio_handlers(socketio)
