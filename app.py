@@ -1,4 +1,5 @@
-from Fakebook import application, sio
+import Fakebook
+from Fakebook import application, socketio
 
 # achievements = {
 #     'created-account': (1, 'Create account', 'Create your account!'),
@@ -25,4 +26,5 @@ from Fakebook import application, sio
 
 if __name__ == "__main__":
     # application.run(app, host="0.0.0.0", port=settings["PORT"])
-    sio.run(application)
+    socketio.on_event("chat", Fakebook.chat.handle_message)
+    socketio.run(application)

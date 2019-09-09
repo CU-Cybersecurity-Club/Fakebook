@@ -15,3 +15,5 @@ pytest
 python-dotenv
 ansible
 gevent
+gevent-websocket
+socketio
