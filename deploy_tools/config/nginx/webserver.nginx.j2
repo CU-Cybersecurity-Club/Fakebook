@@ -39,7 +39,7 @@ server {
     text/x-component
     text/x-cross-domain-policy;
 
-    root /home/{{ ansible_ssh_user }}/{{ host }};
+	root /var/www/{{ host }};
     index index.html index.htm;
 
     client_max_body_size 4G;
@@ -52,12 +52,12 @@ server {
 
     # Location of media files
     location /media  {
-        alias /home/{{ ansible_ssh_user }}/{{ host }}/media;
+    	alias /var/www/{{ host }}/media;
     }
 
     # Location of static files
     location /static {
-        alias /home/{{ ansible_ssh_user }}/{{ host }}/static;
+    	alias /var/www/{{ host }}/static;
     }
 
     # Expires headers to allow browsers to cache some static files
