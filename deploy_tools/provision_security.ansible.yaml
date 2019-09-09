@@ -34,14 +34,14 @@
   # unattended-upgrades configuration
   - name: configure instance to update automatically
     template:
-      src: ./config/apt.10periodic.j2
+      src: ./config/misc/apt.10periodic.j2
       dest: /etc/apt/apt.conf.d/10periodic
     notify:
       - restart unattended-upgrades
 
   - name: install security updates automatically with unattended-upgrades
     template:
-      src: ./config/apt.50unattended-upgrades.j2
+      src: ./config/misc/apt.50unattended-upgrades.j2
       dest: /etc/apt/apt.conf.d/50unattended-upgrades
     notify:
       - restart unattended-upgrades
@@ -49,7 +49,7 @@
   # fail2ban configuration
   - name: configure Fail2Ban for ssh
     template:
-      src: ./config/fail2ban.sshd.local.j2
+      src: ./config/misc/fail2ban.sshd.local.j2
       dest: /etc/fail2ban/jail.d/sshd.local
     notify:
       - restart fail2ban
@@ -57,7 +57,7 @@
   # firewall
   - name: set up iptables firewall (IPv4)
     template:
-      src: ./config/firewall.j2
+      src: ./config/misc/firewall.j2
       dest: /etc/iptables/rules.v4
     notify:
       - restart iptables
@@ -75,5 +75,5 @@
 
   - name: restart iptables
     become: yes
-    command: "iptables-restore < /etc/iptables/rules.v4"
+    command: iptables-restore < /etc/iptables/rules.v4
 ...
