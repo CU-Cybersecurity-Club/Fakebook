@@ -7,11 +7,11 @@ After=network.target
 WorkingDirectory=/var/www/{{ host }}
 ExecStartPre=/var/www/{{ host }}/reset_db.sh
 ExecStart=/var/www/{{ host }}/virtualenv/bin/gunicorn \
+  --worker-class gevent \
   --name {{ host }} \
-  --pythonpath /var/www/{{ host }} \
   --bind unix:/tmp/gunicorn-{{ host }}.socket \
   --log-file /var/www/{{ host }}/gunicorn-{{ host }}.log \
-  --config /etc/gunicorn.d/gunicorn.py app
+  app
 Restart=always
 SyslogIdentifier=gunicorn-{{ host }}
 User=www-data
