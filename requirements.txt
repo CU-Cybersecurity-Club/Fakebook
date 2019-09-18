@@ -16,4 +16,4 @@ python-dotenv
 ansible
 gevent
 gevent-websocket
-socketio
+python-socketio
