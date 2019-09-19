@@ -1,0 +1,3 @@
+# Blanket ignore everything in this directory (except for this file)
+*
+!.gitignore

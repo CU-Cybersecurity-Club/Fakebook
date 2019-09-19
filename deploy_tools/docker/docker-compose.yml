@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  fakebook-proxy:
+    build:
+      context: proxy
+    ports:
+      - "80:80"
+      - "443:443"
+  fakebook-server:
+    build:
+      context: server
+    image: fakebook

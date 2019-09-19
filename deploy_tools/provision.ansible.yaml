@@ -7,7 +7,7 @@
   - name: install packages
     apt:
       force: yes
-      pkg: fail2ban,unattended-upgrades,logwatch,iptables-persistent,nginx,git,python3,python-pip,python3-pip,python3-setuptools,software-properties-common,sqlite3
+      pkg: fail2ban,unattended-upgrades,logwatch,iptables-persistent,nginx,git,python3,python3-pip,python3-setuptools,python3-venv,software-properties-common,sqlite3
     become: yes
 
   ###
@@ -24,7 +24,7 @@
     become: yes
     user:
       name: flask
-      groups: flask,www-data
+      groups: flask,www-data,sudo
 
   ###
   ### GENERIC SECURITY PROVISIONING
@@ -49,6 +49,7 @@
 
   # unattended-upgrades configuration
   - name: configure instance to update automatically
+    become: yes
     template:
       src: ./config/misc/apt.10periodic.j2
       dest: /etc/apt/apt.conf.d/10periodic
@@ -56,6 +57,7 @@
       - restart unattended-upgrades
 
   - name: install security updates automatically with unattended-upgrades
+    become: yes
     template:
       src: ./config/misc/apt.50unattended-upgrades.j2
       dest: /etc/apt/apt.conf.d/50unattended-upgrades
@@ -64,6 +66,7 @@
 
   # fail2ban configuration
   - name: configure Fail2Ban for ssh
+    become: yes
     template:
       src: ./config/misc/fail2ban.sshd.local.j2
       dest: /etc/fail2ban/jail.d/sshd.local
@@ -82,14 +85,6 @@
   ###
   ### WEBSERVER PROVISIONING
   ###
-  - name: give permissions for /var/www to www-data
-    become: yes
-    file:
-      path: /var/www
-      owner: www-data
-      group: www-data
-      mode: '0775'
-
   # nginx configuration
   - name: add nginx.conf to /etc/nginx
     become: yes
@@ -159,6 +154,16 @@
       dest: /etc/gunicorn.d/gunicorn.py
 
   # Update code and configuration from repository
+  - name: give ownership of /var/www to www-data
+    become: yes
+    file:
+      path: /var/www
+      owner: www-data
+      group: www-data
+      mode: '0770'
+      recurse: yes
+      state: directory
+
   - name: download code from repository
     become: yes
     become_user: www-data
@@ -174,6 +179,7 @@
     pip:
       name: virtualenv
       executable: pip3
+      extra_args: "--no-cache-dir"
 
   - name: update Python virtual environment
     become: yes
